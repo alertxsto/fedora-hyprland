@@ -1,0 +1,147 @@
+@import "colors/current.css";
+
+* {
+    font-family: "FiraCode Nerd Font", "MesloLGS NF", "Fira Code", sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+}
+
+window#waybar {
+    /* Full width transparent background */
+    background: transparent;
+    color: @text;
+}
+
+tooltip {
+    background: @base;
+    border: 2px solid @mauve;
+    border-radius: 12px;
+}
+
+tooltip label {
+    color: @text;
+}
+
+/* 
+  Square shape for widgets.
+  We give margins to separate them but keep the edges sharp.
+*/
+#window, #clock, #cpu, #memory, #pulseaudio, #bluetooth, #network, #power-profiles-daemon, #battery, #tray {
+    background: @base;
+    color: @mauve;
+    border-radius: 0;
+    padding: 2px 14px;
+    margin: 6px 4px;
+    border-bottom: 2px solid transparent;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Add some hover animation for all blocks */
+#window:hover, #clock:hover, #cpu:hover, #memory:hover, #pulseaudio:hover, #bluetooth:hover, #network:hover, #power-profiles-daemon:hover, #battery:hover, #tray:hover {
+    background: @surface0;
+    border-bottom: 2px solid @lavender;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Specific colors for specific modules to make them pop */
+#workspaces {
+    padding: 0;
+    margin: 0;
+}
+
+#workspaces button {
+    background: @base;
+    padding: 2px 12px;
+    margin: 6px 4px;
+    color: @surface2;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+}
+
+#workspaces button:hover {
+    background: @surface1;
+    color: @text;
+    border-bottom: 2px solid @text;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
+    text-shadow: 0 0 5px rgba(202, 211, 245, 0.5);
+}
+
+#workspaces button.active {
+    color: @mauve;
+    border-bottom: 2px solid @mauve;
+    text-shadow: 0 0 5px rgba(198, 160, 246, 0.6);
+}
+
+#workspaces button.urgent {
+    color: @red;
+    border-bottom: 2px solid @red;
+}
+
+#clock {
+    font-size: 15px;
+}
+
+#pulseaudio.muted {
+    color: @surface2;
+}
+
+#network.disconnected {
+    color: @red;
+}
+
+#power-profiles-daemon.power-saver {
+    color: @green;
+}
+
+#power-profiles-daemon.balanced {
+    color: @blue;
+}
+
+#power-profiles-daemon.performance {
+    color: @red;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.charging, #battery.plugged {
+    color: @yellow;
+}
+
+#battery.warning:not(.charging) {
+    color: @peach;
+}
+
+#battery.critical:not(.charging) {
+    color: @red;
+    animation: blink 0.5s linear infinite;
+}
+
+@keyframes blink {
+    to {
+        background-color: @red;
+        color: @base;
+    }
+}
+
+#tray {
+    padding: 2px 10px;
+}
+
+#tray > .passive {
+    -gtk-icon-effect: dim;
+}
+
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @red;
+}

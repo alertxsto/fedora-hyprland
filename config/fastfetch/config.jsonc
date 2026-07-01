@@ -1,0 +1,29 @@
+{
+  "logo": {
+    "source": "$HOME/.config/fastfetch/logo.txt",
+    "padding": { "right": 3, "top": 1 }
+  },
+  "display": { "separator": "  " },
+  "modules": [
+    { "type": "title", "keyColor": "cyan" },
+    { "type": "separator", "string": "────────────────────────────────────────────" },
+    { "type": "os", "key": " OS     ", "keyColor": "cyan" },
+    { "type": "kernel", "key": " Kernel ", "keyColor": "cyan" },
+    { "type": "host", "key": " Host   ", "keyColor": "cyan" },
+    { "type": "wm", "key": " WM     ", "keyColor": "blue" },
+    { "type": "terminal", "key": " Term   ", "keyColor": "blue" },
+    { "type": "shell", "key": " Shell  ", "keyColor": "blue" },
+    { "type": "packages", "key": " Pkgs   ", "keyColor": "magenta" },
+    { "type": "uptime", "key": " Uptime ", "keyColor": "magenta" },
+    "break",
+    { "type": "cpu", "key": " CPU    ", "keyColor": "green" },
+    { "type": "gpu", "key": " GPU    ", "keyColor": "green" },
+    { "type": "memory", "key": " Memory ", "keyColor": "green" },
+    { "type": "disk", "key": " Disk   ", "keyColor": "green" },
+    { "type": "battery", "key": " Bat    ", "keyColor": "yellow" },
+    "break",
+    "colors",
+    "break",
+    { "type": "separator", "string": "────────────────────────────────────────────" }
+  ]
+}

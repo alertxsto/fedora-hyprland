@@ -1,0 +1,10 @@
+# Symlink targets (managed by theme-sync.sh)
+hypr/colors/current.lua
+waybar/colors/current.css
+kitty/colors.conf
+
+# Machine-specific
+fish/fish_variables
+nvim/lazy-lock.json
+nvim/.neoconf.json
+gtk-3.0/colors.css
