@@ -51,6 +51,13 @@ ln -sf "$CONFIG_DIR/hypr/colors/Catppuccin-Dark.lua" "$CONFIG_DIR/hypr/colors/cu
 ln -sf "$CONFIG_DIR/waybar/colors/Catppuccin-Dark.css" "$CONFIG_DIR/waybar/colors/current.css"
 ln -sf "$CONFIG_DIR/kitty/colors/Catppuccin-Dark.conf" "$CONFIG_DIR/kitty/colors.conf"
 
+# Install pre-compiled binaries
+if [ -d "$DOTFILES_DIR/bin" ]; then
+    mkdir -p "$HOME/.local/bin"
+    cp "$DOTFILES_DIR/bin/"* "$HOME/.local/bin/"
+    echo "  Installed binaries (bluetui, impala-nm)"
+fi
+
 echo ""
 echo "Dotfiles installed!"
 echo "Run '~/.config/scripts/bgselector.sh' to set a wallpaper & auto-sync themes."
