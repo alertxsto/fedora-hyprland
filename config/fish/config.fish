@@ -36,5 +36,8 @@ if status is-interactive
     end
 end
 
+# Cargo (Rust)
+fish_add_path /home/alertxsto/.cargo/bin
+
 # opencode
 fish_add_path /home/alertxsto/.opencode/bin
