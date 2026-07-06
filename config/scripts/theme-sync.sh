@@ -1,8 +1,21 @@
 #!/bin/bash
 
-# Extract theme and variant from wallpaper path
-wallpaper_path=$(swww query 2>/dev/null | grep -oP '(?<=image: ).*' | head -n1 | tr -d '\n\r')
-if [ -z "$wallpaper_path" ]; then
+CACHE_FILE="$HOME/.cache/current-wallpaper"
+
+# Get wallpaper path: argument > cache file > awww query
+wallpaper_path=""
+if [ -n "$1" ]; then
+    wallpaper_path="$1"
+elif [ -f "$CACHE_FILE" ]; then
+    wallpaper_path=$(cat "$CACHE_FILE")
+fi
+
+# Save for later use
+if [ -n "$wallpaper_path" ]; then
+    echo "$wallpaper_path" > "$CACHE_FILE"
+fi
+
+if [ -z "$wallpaper_path" ] || [ ! -f "$wallpaper_path" ]; then
     exit 0
 fi
 
@@ -10,7 +23,7 @@ fi
 variant=$(echo "$wallpaper_path" | awk -F'/' '{print $(NF-1)}')
 theme_name=$(echo "$wallpaper_path" | awk -F'/' '{print $(NF-2)}')
 
-if [ -z "$theme_name" ] || [ "$theme_name" == "Wallpapers" ]; then
+if [ -z "$theme_name" ] || [ "$theme_name" == "Wallpapers" ] || [ "$theme_name" == "Pictures" ]; then
     theme_name="Catppuccin"
     variant="Dark"
 fi

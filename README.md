@@ -9,7 +9,7 @@ Personal dotfiles for Hyprland on Fedora Linux.
 | Window Manager | Hyprland | Lua config, wayland-native |
 | Status Bar | Waybar | Catppuccin-themed, hover animations |
 | Launcher | Rofi | drun/run/filebrowser/window modes |
-| Wallpaper Picker | Custom Rofi + swww | Thumbnail preview, parallel generation |
+| Wallpaper Picker | Custom Rofi + awww | Thumbnail preview, parallel generation |
 | Terminal | Kitty (primary) + Ghostty (secondary) | Theme-synced colors |
 | Shell | Fish | eza, bat, rg, fd, zoxide, delta |
 | Prompt | Starship | Minimal git-aware prompt |
@@ -65,7 +65,7 @@ Supported themes: Catppuccin, Gruvbox, Nord, Everforest, Dracula, Material, Osak
 - Scans `~/Pictures/Wallpapers/` recursively for images
 - Generates thumbnails in parallel using ImageMagick (all CPU cores)
 - Displays wallpapers in a Rofi grid (7 columns, 330x540 thumbnails)
-- Applies selected wallpaper via `swww` with fade transition
+- Applies selected wallpaper via `awww` with fade transition
 - Automatically syncs theme based on wallpaper path
 
 ### Waybar Modules
@@ -111,7 +111,7 @@ After installation, run the wallpaper picker to activate the theme engine:
 - waybar (bar)
 - rofi (launcher)
 - kitty (terminal)
-- swww (wallpaper daemon)
+- awww (wallpaper daemon)
 - swaync or mako (notifications, if needed)
 - pipewire + wireplumber (audio)
 - playerctl (media keys)

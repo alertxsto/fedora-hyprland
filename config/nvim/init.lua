@@ -3,7 +3,7 @@ require("config.lazy")
 
 -- Auto-detect theme from wallpaper
 local function get_theme_from_wallpaper()
-  local handle = io.popen("swww query 2>/dev/null | grep -oP '(?<=image: ).*' | head -n1")
+  local handle = io.popen("cat ~/.cache/current-wallpaper 2>/dev/null | head -n1")
   local wallpaper = handle:read("*a"):gsub("\n", "")
   handle:close()
   
@@ -70,7 +70,7 @@ vim.api.nvim_create_autocmd("ColorScheme", { callback = set_transparency })
 local last_wallpaper = ""
 local timer = vim.loop.new_timer()
 timer:start(0, 2000, vim.schedule_wrap(function()
-  local handle = io.popen("swww query 2>/dev/null | grep -oP '(?<=image: ).*' | head -n1")
+  local handle = io.popen("cat ~/.cache/current-wallpaper 2>/dev/null | head -n1")
   local current_wallpaper = handle:read("*a"):gsub("\n", "")
   handle:close()
   

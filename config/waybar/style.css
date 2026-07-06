@@ -2,7 +2,7 @@
 
 * {
     font-family: "FiraCode Nerd Font", "MesloLGS NF", "Fira Code", sans-serif;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     border: none;
     border-radius: 0;
@@ -35,8 +35,8 @@ tooltip label {
     background: @base;
     color: @mauve;
     border-radius: 0;
-    padding: 2px 14px;
-    margin: 6px 4px;
+    padding: 2px 10px;
+    margin: 4px 3px;
     border-bottom: 2px solid transparent;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
     transition: all 0.2s ease-in-out;
@@ -57,8 +57,8 @@ tooltip label {
 
 #workspaces button {
     background: @base;
-    padding: 2px 12px;
-    margin: 6px 4px;
+    padding: 2px 8px;
+    margin: 4px 3px;
     color: @surface2;
     border-radius: 0;
     border-bottom: 2px solid transparent;
@@ -86,7 +86,7 @@ tooltip label {
 }
 
 #clock {
-    font-size: 15px;
+    font-size: 13px;
 }
 
 #pulseaudio.muted {
@@ -134,7 +134,7 @@ tooltip label {
 }
 
 #tray {
-    padding: 2px 10px;
+    padding: 2px 8px;
 }
 
 #tray > .passive {
