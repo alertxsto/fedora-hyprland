@@ -1,87 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
+  <!-- Background -->
+  <rect width="800" height="400" fill="#1e1e2e" rx="12"/>
+  <!-- Accent bar -->
+  <rect x="0" y="0" width="800" height="6" fill="#c6a0f6"/>
+  <!-- Title -->
+  <text x="400" y="100" text-anchor="middle" font-family="monospace" font-size="36" font-weight="bold" fill="#cdd6f4">󰖷 fedora-hyprland</text>
+  <!-- Subtitle -->
+  <text x="400" y="140" text-anchor="middle" font-family="monospace" font-size="16" fill="#a6adc8">Hyprland dotfiles — Fedora / openSUSE</text>
+  <!-- Feature badges -->
+  <rect x="120" y="190" width="130" height="40" rx="8" fill="#313244"/>
+  <text x="185" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#89b4fa">Hyprland 󰖷</text>
+  <rect x="265" y="190" width="130" height="40" rx="8" fill="#313244"/>
+  <text x="330" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#a6e3a1">Waybar </text>
+  <rect x="410" y="190" width="130" height="40" rx="8" fill="#313244"/>
+  <text x="475" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#f9e2af">Rofi </text>
+  <rect x="555" y="190" width="130" height="40" rx="8" fill="#313244"/>
+  <text x="620" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#f38ba8">Kitty </text>
+  <!-- Theme engine highlight -->
+  <rect x="100" y="260" width="600" height="100" rx="10" fill="#181825" stroke="#c6a0f6" stroke-width="1.5"/>
+  <text x="400" y="290" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#c6a0f6"> Theme Engine</text>
+  <text x="400" y="315" text-anchor="middle" font-family="monospace" font-size="12" fill="#bac2de">Wallpaper → Auto-sync colors to Hyprland · Waybar · Kitty · Neovim</text>
+  <text x="400" y="340" text-anchor="middle" font-family="monospace" font-size="11" fill="#585b70">8 themes · Dark/Light variants · 230+ wallpapers</text>
+</svg>
+
 # fedora-hyprland
 
-Personal dotfiles for Hyprland on Fedora Linux.
+Personal dotfiles for **Hyprland** on Fedora Linux (also works on openSUSE).  
+Wallpaper-driven theme engine that auto-syncs colors across your entire desktop.
 
-## Overview
+> **Live preview** — bar on top, clean borders, zero rounding, full-width transparency.
 
-| Component | Choice | Notes |
-|---|---|---|
-| Window Manager | Hyprland | Lua config, wayland-native |
-| Status Bar | Waybar | Catppuccin-themed, hover animations |
-| Launcher | Rofi | drun/run/filebrowser/window modes |
-| Wallpaper Picker | Custom Rofi + awww | Thumbnail preview, parallel generation |
-| Terminal | Kitty (primary) + Ghostty (secondary) | Theme-synced colors |
-| Shell | Fish | eza, bat, rg, fd, zoxide, delta |
-| Prompt | Starship | Minimal git-aware prompt |
-| Editor | Neovim (LazyVim) | Auto theme sync from wallpaper |
-| System Info | Fastfetch | Custom ASCII logo |
-| System Monitor | Btop | Braille graphs, CPU freq/temp |
-| File Manager | Thunar | Custom "Open Terminal Here" action |
-| GTK Theme | Catppuccin-Dark | WhiteSur-dark icons, breeze cursors |
-| Qt Theme | Kvantum MacTahoeDark | Consistent with GTK |
+##  Theme Engine
 
-## Features
-
-### Theme Engine
-
-Wallpaper-based theme sync across all components. The wallpaper path determines which color scheme is used.
+Pick a wallpaper → colors auto-sync everywhere.
 
 ```
 Pictures/Wallpapers/<Theme>/<Variant>/<wallpaper>
 ```
 
-Changing a wallpaper via `bgselector.sh` triggers `theme-sync.sh`, which applies matching colors to:
+| Component | What syncs |
+|-----------|-----------|
+| **Hyprland** | Active window border color |
+| **Waybar** | Background, text, accent, surface |
+| **Kitty** | Terminal color scheme |
+| **Neovim** | Colorscheme + transparency |
 
-- Hyprland (active window border)
-- Waybar (bar background, text, accent colors)
-- Kitty (terminal color scheme)
-- Neovim (colorscheme + transparency)
+### Supported themes
 
-Supported themes: Catppuccin, Gruvbox, Nord, Everforest, Dracula, Material, Osaka, Rose-Pine (each with Dark/Light variants where available).
+| Theme | Dark | Light |
+|-------|------|-------|
+| Catppuccin |  |  |
+| Gruvbox |  |  |
+| Nord |  |  |
+| Material |  |  |
+| Everforest |  | — |
+| Dracula |  | — |
+| Osaka |  | — |
+| Rose-Pine |  | — |
 
-### Keybindings (Hyprland)
+**230+ wallpapers** included across all themes and variants.
+
+##  Waybar
+
+| Position | Modules |
+|----------|---------|
+| **Left** | Workspaces · Window title |
+| **Center** | Clock ( HH:MM  DD Mon) |
+| **Right** | CPU  · Memory  · PulseAudio  · Bluetooth  · Network  · Power  · Battery  · Tray |
+
+- **Height**: 38px · **Font**: 14px FiraCode Nerd Font
+- Smooth hover animations, color transitions
+- Theme-aware via `colors/current.css`
+
+##  Wallpaper Picker
+
+`~/.config/scripts/bgselector.sh` — custom Rofi-based thumbnail browser.
+
+```
+Super + W      Launch wallpaper picker
+```
+
+- Scans `~/Pictures/Wallpapers/` recursively
+- Generates thumbnails in parallel (all CPU cores via ImageMagick)
+- 7-column grid, 330×540 thumbnails
+- Applies wallpaper via `awww` with fade transition
+- Triggers `theme-sync.sh` automatically
+
+##  Keybindings
 
 | Key | Action |
-|---|---|
-| Super + Q | Open terminal (kitty) |
-| Super + C | Close focused window |
-| Super + E | Open file manager (thunar) |
-| Super + R | Open app launcher (vicinae) |
-| Super + W | Open wallpaper picker |
-| Super + V | Toggle window float |
-| Super + S | Toggle scratchpad |
-| Super + Arrows | Move focus |
-| Super + 1-0 | Switch workspace |
-| Super + Shift + 1-0 | Move window to workspace |
-| Super + mouse drag | Move/resize window |
-| Print | Flameshot screenshot |
-| XF86Audio* | Volume/media/brightness keys |
-| Super + mouse scroll | Scroll workspaces |
+|-----|--------|
+| `Super + Q` | Open terminal (kitty) |
+| `Super + C` | Close window |
+| `Super + E` | Open file manager (Thunar) |
+| `Super + R` | App launcher (rofi) |
+| `Super + W` | **Wallpaper picker** |
+| `Super + V` | Toggle float |
+| `Super + S` | Scratchpad (special workspace) |
+| `Super + arrows` | Move focus |
+| `Super + 1-0` | Switch workspace |
+| `Super + Shift + 1-0` | Move window to workspace |
+| `Super + mouse drag` | Move / resize window |
+| `Print` | Flameshot screenshot |
+| `XF86Audio*` | Volume · Media · Brightness |
 
-### Wallpaper Picker
+##  Components
 
-`~/.config/scripts/bgselector.sh` is a custom wallpaper selector that:
+| Component | Choice | Notes |
+|-----------|--------|-------|
+| WM | **Hyprland** | Lua config, wayland-native |
+| Bar | **Waybar** | Catppuccin-themed, animated |
+| Launcher | **Rofi** | drun/run/window modes |
+| Terminal | **Kitty** + Ghostty | Theme-synced |
+| Shell | **Fish** | eza, bat, rg, fd, zoxide, delta |
+| Prompt | **Starship** | Minimal git-aware |
+| Editor | **Neovim** (LazyVim) | Auto theme sync |
+| System Info | **Fastfetch** | Custom ASCII logo |
+| Monitor | **Btop** | Braille graphs |
+| FM | **Thunar** | Custom open-here action |
+| GTK | **Catppuccin-Dark** | WhiteSur icons, breeze cursors |
+| Qt | **Kvantum MacTahoeDark** | Matches GTK |
 
-- Scans `~/Pictures/Wallpapers/` recursively for images
-- Generates thumbnails in parallel using ImageMagick (all CPU cores)
-- Displays wallpapers in a Rofi grid (7 columns, 330x540 thumbnails)
-- Applies selected wallpaper via `awww` with fade transition
-- Automatically syncs theme based on wallpaper path
-
-### Waybar Modules
-
-Left: Workspaces, Window title
-Center: Clock
-Right: CPU, Memory, PulseAudio, Bluetooth, Network, Power Profiles, Battery, System Tray
-
-Pre-compiled binaries included:
-
-- `bluetui` (3.3 MB) -- Bluetooth TUI client
-- `impala-nm` (4.6 MB) -- NetworkManager TUI client
-
-Both are Rust binaries, dynamically linked, copied to `~/.local/bin/` during install.
-
-## Installation
+##  Installation
 
 ```bash
 git clone https://github.com/alertxsto/fedora-hyprland ~/dotfiles
@@ -91,104 +131,93 @@ cd ~/dotfiles
 
 The script will:
 
-1. Backup existing config directories to `.bak`
-2. Symlink all configs from the repo to `~/.config/`
-3. Copy wallpaper collection to `~/Pictures/Wallpapers/`
-4. Install pre-compiled binaries to `~/.local/bin/`
-5. Create default theme symlinks (Catppuccin-Dark)
+1. Install required packages (dnf / zypper)
+2. Install FiraCode Nerd Font
+3. Create directory structure
+4. **Symlink** all configs to `~/.config/`
+5. Set default theme (Catppuccin-Dark)
+6. **Link wallpapers** to `~/Pictures/Wallpapers/`
+7. Set up cursor theme (`breeze_cursors`)
+8. Enable systemd user services
 
-After installation, run the wallpaper picker to activate the theme engine:
+Then activate the theme engine:
 
 ```bash
 ~/.config/scripts/bgselector.sh
 ```
 
+Or set one directly:
+
+```bash
+awww img ~/Pictures/Wallpapers/Catppuccin/Dark/example.png -t fade
+```
+
 ### Dependencies
 
-**Runtime:**
+**Runtime** — `hyprland waybar rofi kitty fish starship fastfetch btop neovim thunar`  
+**Audio** — `pipewire wireplumber playerctl`  
+**Hardware** — `brightnessctl`  
+**Graphics** — `ImageMagick` (thumbnail gen)  
+**Shell** — `eza bat ripgrep fd zoxide git-delta`  
 
-- hyprland (WM)
-- waybar (bar)
-- rofi (launcher)
-- kitty (terminal)
-- awww (wallpaper daemon)
-- swaync or mako (notifications, if needed)
-- pipewire + wireplumber (audio)
-- playerctl (media keys)
-- brightnessctl (backlight)
-- flameshot (screenshots)
-- fastfetch (system info)
-- btop (system monitor)
-- ImageMagick (thumbnail generation, used by bgselector)
+All auto-installed on Fedora. On openSUSE, `awww` needs manual cargo install:
 
-**Recommended:**
+```bash
+cargo install awww
+```
 
-- eza, bat, ripgrep, fd, zoxide, delta (fish aliases)
-- FiraCode Nerd Font (terminal and waybar)
-- JetBrainsMono Nerd Font (rofi)
-- Papirus icon theme (rofi icons)
-- Catppuccin GTK theme
-- WhiteSur-dark icon theme
+### Cursor
 
-## Project Structure
+Cursor theme is set at three levels:
+
+1. **gtk-3.0** — `gsettings` / `settings.ini`
+2. **Hyprland** — `XCURSOR_THEME` env + `hyprctl setcursor`
+3. **Fallback** — `~/.icons/default/index.theme`
+
+All point to `breeze_cursors` (size 24).
+
+##  Project Structure
 
 ```
 dotfiles/
 ├── bin/                          # Pre-compiled Rust binaries
-│   ├── bluetui
-│   └── impala-nm
+│   ├── bluetui                   # Bluetooth TUI
+│   └── impala-nm                 # NetworkManager TUI
 ├── config/
-│   ├── hypr/                     # Hyprland config + theme colors
-│   │   ├── hyprland.lua
-│   │   └── colors/*.lua
-│   ├── waybar/                   # Waybar config + theme colors
-│   │   ├── config.jsonc
-│   │   ├── style.css
-│   │   └── colors/*.css
-│   ├── rofi/                     # Rofi launcher + wallpaper picker
-│   │   ├── config.rasi
-│   │   ├── bgselector/style.rasi
-│   │   └── colors/wallust.rasi
-│   ├── kitty/                    # Kitty terminal + theme colors
-│   │   ├── kitty.conf
-│   │   └── colors/*.conf
-│   ├── ghostty/config.ghostty
-│   ├── fish/                     # Fish shell config
-│   │   ├── config.fish
-│   │   └── conf.d/omf.fish
+│   ├── hypr/                     # Hyprland + theme colors
+│   ├── waybar/                   # Bar + theme colors
+│   ├── rofi/                     # Launcher + bgselector
+│   ├── kitty/                    # Terminal + theme colors
+│   ├── ghostty/
+│   ├── fish/                     # Shell config
 │   ├── starship.toml
-│   ├── nvim/                     # Neovim (LazyVim) + auto theme
-│   │   ├── init.lua
-│   │   └── lua/
+│   ├── nvim/                     # LazyVim + auto theme
 │   ├── fastfetch/                # System info
-│   │   ├── config.jsonc
-│   │   └── logo.txt
-│   ├── btop/btop.conf
+│   ├── btop/
 │   ├── scripts/                  # Theme engine
 │   │   ├── bgselector.sh
 │   │   └── theme-sync.sh
-│   ├── gtk-3.0/settings.ini
-│   ├── Thunar/uca.xml
-│   └── systemd/user/             # User services
-├── Pictures/Wallpapers/          # Wallpaper collection (237 MB)
-│   ├── Catppuccin/Dark/
-│   ├── Catppuccin/Light/
-│   ├── Gruvbox/Dark/
-│   ├── Nord/Dark/
-│   └── ...
-├── install.sh                    # Bootstrap script
+│   ├── gtk-3.0/
+│   ├── Thunar/
+│   └── systemd/user/
+├── Pictures/Wallpapers/          # 230+ wallpapers
+├── install.sh                    # Bootstrap
 └── README.md
 ```
 
-## Unmanaged Files
+##  Unmanaged
 
-The following are excluded from the repo (generated or session-specific):
+These are generated at runtime and **not** tracked:
 
-- `hypr/colors/current.lua` -- symlink managed by theme-sync
-- `waybar/colors/current.css` -- symlink managed by theme-sync
-- `kitty/colors.conf` -- symlink managed by theme-sync
-- `fish/fish_variables` -- session-specific
-- `nvim/lazy-lock.json` -- lock file
-- `nvim/.neoconf.json` -- project config
-- `gtk-3.0/colors.css` -- generated by KDE
-- KDE Plasma configs, browser profiles, dconf database
+- `hypr/colors/current.lua`
+- `waybar/colors/current.css`
+- `kitty/colors.conf`
+- `fish/fish_variables`
+- `nvim/lazy-lock.json`
+- `gtk-3.0/colors.css`
+
+---
+
+<p align="center">
+  <sub>Hyprland · Fedora · Catppuccin · Lua config · Rofi · KDE cursor · awww</sub>
+</p>

@@ -172,7 +172,12 @@ mkdir -p "$HOME/.config/waybar/colors"
 mkdir -p "$HOME/.config/kitty/colors"
 mkdir -p "$HOME/.local/bin"
 mkdir -p "$HOME/Pictures"
-ok "Directories ready."
+mkdir -p "$HOME/.icons/default"
+cat > "$HOME/.icons/default/index.theme" <<'EOF'
+[Icon Theme]
+Inherits=breeze_cursors
+EOF
+ok "Directories and icon theme ready."
 
 # ═════════════════════════════════════════════════════════════════════════════
 # [4] Deploy config files
