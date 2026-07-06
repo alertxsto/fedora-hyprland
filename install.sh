@@ -122,7 +122,7 @@ case "$DISTRO" in
         ;;
     opensuse)
         sudo zypper install -y "${OPENSUSE_PKGS[@]}"
-        sudo zypper install -y awww 2>/dev/null || warn "awww not in repos — install manually via cargo"
+        sudo zypper install -y awww 2>/dev/null || warn "awww not in repos — install manually"
         ;;
 esac
 

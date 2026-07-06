@@ -1,27 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" viewBox="0 0 800 400">
-  <!-- Background -->
-  <rect width="800" height="400" fill="#1e1e2e" rx="12"/>
-  <!-- Accent bar -->
-  <rect x="0" y="0" width="800" height="6" fill="#c6a0f6"/>
-  <!-- Title -->
-  <text x="400" y="100" text-anchor="middle" font-family="monospace" font-size="36" font-weight="bold" fill="#cdd6f4">󰖷 fedora-hyprland</text>
-  <!-- Subtitle -->
-  <text x="400" y="140" text-anchor="middle" font-family="monospace" font-size="16" fill="#a6adc8">Hyprland dotfiles — Fedora / openSUSE</text>
-  <!-- Feature badges -->
-  <rect x="120" y="190" width="130" height="40" rx="8" fill="#313244"/>
-  <text x="185" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#89b4fa">Hyprland 󰖷</text>
-  <rect x="265" y="190" width="130" height="40" rx="8" fill="#313244"/>
-  <text x="330" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#a6e3a1">Waybar </text>
-  <rect x="410" y="190" width="130" height="40" rx="8" fill="#313244"/>
-  <text x="475" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#f9e2af">Rofi </text>
-  <rect x="555" y="190" width="130" height="40" rx="8" fill="#313244"/>
-  <text x="620" y="216" text-anchor="middle" font-family="monospace" font-size="13" fill="#f38ba8">Kitty </text>
-  <!-- Theme engine highlight -->
-  <rect x="100" y="260" width="600" height="100" rx="10" fill="#181825" stroke="#c6a0f6" stroke-width="1.5"/>
-  <text x="400" y="290" text-anchor="middle" font-family="monospace" font-size="15" font-weight="bold" fill="#c6a0f6"> Theme Engine</text>
-  <text x="400" y="315" text-anchor="middle" font-family="monospace" font-size="12" fill="#bac2de">Wallpaper → Auto-sync colors to Hyprland · Waybar · Kitty · Neovim</text>
-  <text x="400" y="340" text-anchor="middle" font-family="monospace" font-size="11" fill="#585b70">8 themes · Dark/Light variants · 230+ wallpapers</text>
-</svg>
+```
+██╗  ██╗██╗   ██╗██████╗ ██████╗ ██╗      █████╗ ███╗   ██╗██████╗
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██║     ██╔══██╗████╗  ██║██╔══██╗
+███████║ ╚████╔╝ ██████╔╝██████╔╝██║     ███████║██╔██╗ ██║██║  ██║
+██╔══██║  ╚██╔╝  ██╔═══╝ ██╔══██╗██║     ██╔══██║██║╚██╗██║██║  ██║
+██║  ██║   ██║   ██║     ██║  ██║███████╗██║  ██║██║ ╚████║██████╔╝
+╚═╝  ╚═╝   ╚═╝   ╚═╝     ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═════╝
+         Hyprland dotfiles — Fedora / openSUSE
+```
 
 # fedora-hyprland
 
@@ -160,11 +145,7 @@ awww img ~/Pictures/Wallpapers/Catppuccin/Dark/example.png -t fade
 **Graphics** — `ImageMagick` (thumbnail gen)  
 **Shell** — `eza bat ripgrep fd zoxide git-delta`  
 
-All auto-installed on Fedora. On openSUSE, `awww` needs manual cargo install:
-
-```bash
-cargo install awww
-```
+All auto-installed on both Fedora and openSUSE Tumbleweed.
 
 ### Cursor
 
