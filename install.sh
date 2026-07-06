@@ -171,6 +171,7 @@ mkdir -p "$HOME/.config/hypr/colors"
 mkdir -p "$HOME/.config/waybar/colors"
 mkdir -p "$HOME/.config/kitty/colors"
 mkdir -p "$HOME/.local/bin"
+mkdir -p "$HOME/Pictures"
 ok "Directories ready."
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -218,7 +219,24 @@ ln -sf "$HOME/.config/kitty/colors/Catppuccin-Dark.conf"  "$HOME/.config/kitty/c
 ok "Theme defaults set."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [6] Enable systemd services
+# [6] Deploy Wallpapers
+# ═════════════════════════════════════════════════════════════════════════════
+step "Deploying wallpapers"
+
+WALLPAPERS_SRC="$DOTFILES/Pictures/Wallpapers"
+WALLPAPERS_DST="$HOME/Pictures/Wallpapers"
+
+if [ -d "$WALLPAPERS_SRC" ]; then
+    if [ ! -e "$WALLPAPERS_DST" ] || [ ! -L "$WALLPAPERS_DST" ]; then
+        backup "$WALLPAPERS_DST"
+        rm -rf "$WALLPAPERS_DST"
+    fi
+    ln -sf "$WALLPAPERS_SRC" "$WALLPAPERS_DST"
+    ok "Wallpapers linked."
+fi
+
+# ═════════════════════════════════════════════════════════════════════════════
+# [7] Enable systemd services
 # ═════════════════════════════════════════════════════════════════════════════
 step "Enabling systemd user services"
 

@@ -8,7 +8,7 @@ mkdir -p "$CACHE_DIR"
 
 # Build current wallpaper index
 current_index=$(mktemp)
-find "$WALL_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.tiff' -o -iname '*.avif' \) -printf '%p\n' > "$current_index"
+find -L "$WALL_DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' -o -iname '*.gif' -o -iname '*.bmp' -o -iname '*.tiff' -o -iname '*.avif' \) -printf '%p\n' > "$current_index"
 
 # Clean orphaned cache files
 if [ -f "$CACHE_INDEX" ]; then

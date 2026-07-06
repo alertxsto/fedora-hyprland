@@ -5,7 +5,7 @@
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
-    "height": 32,
+    "height": 38,
     "modules-left": [
         "hyprland/workspaces",
         "hyprland/window"
@@ -113,7 +113,7 @@
         }
     },
     "tray": {
-        "icon-size": 16,
+        "icon-size": 20,
         "spacing": 10
     }
 }

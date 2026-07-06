@@ -22,17 +22,12 @@ local theme_colors = dofile(os.getenv("HOME") .. "/.config/hypr/colors/current.l
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
---hl.monitor({
---    output   = "",
---    mode     = "preferred",
---    position = "auto",
---    scale    = "auto",
---})
+-- Universal: auto-detect all monitors with preferred mode
 hl.monitor({
-	output = "eDP-1",
-	mode = "1366x768@60.06",
-	position = "0x0",
-	scale = 1,
+	output = "",
+	mode = "preferred",
+	position = "auto",
+	scale = "1",
 })
 
 ---------------------
@@ -59,6 +54,7 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("awww-daemon")
 	hl.exec_cmd("systemctl --user start vicinae")
+	hl.exec_cmd("hyprctl setcursor breeze_cursors 24")
 end)
 
 -------------------------------
@@ -67,6 +63,8 @@ end)
 
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Environment-variables/
 
+hl.env("XCURSOR_THEME", "breeze_cursors")
+hl.env("HYPRCURSOR_THEME", "breeze_cursors")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
 
