@@ -31,11 +31,14 @@ fi
 WAYBAR_COLORS_DIR="$HOME/.config/waybar/colors"
 HYPR_COLORS_DIR="$HOME/.config/hypr/colors"
 KITTY_COLORS_DIR="$HOME/.config/kitty/colors"
+SWAYNC_COLORS_DIR="$HOME/.config/swaync/colors"
+mkdir -p "$SWAYNC_COLORS_DIR"
 
 THEME_FILE_ID="${theme_name}-${variant}"
 WAYBAR_THEME="$WAYBAR_COLORS_DIR/$THEME_FILE_ID.css"
 HYPR_THEME="$HYPR_COLORS_DIR/$THEME_FILE_ID.lua"
 KITTY_THEME="$KITTY_COLORS_DIR/$THEME_FILE_ID.conf"
+SWAYNC_THEME="$SWAYNC_COLORS_DIR/$THEME_FILE_ID.css"
 
 # Default fallback colors
 BASE="#24273a"
@@ -115,10 +118,30 @@ if [ ! -f "$HYPR_THEME" ]; then
     echo "return { active_border = \"rgba(${ACCENT_HEX:1})\" }" > "$HYPR_THEME"
 fi
 
+# Generate swaync color CSS (same variables as waybar)
+if [ ! -f "$SWAYNC_THEME" ]; then
+    # Compute slightly darker mantle from BASE
+    cat > "$SWAYNC_THEME" <<EOF
+@define-color base     ${BASE};
+@define-color mantle   ${BASE};
+@define-color surface0 ${SURFACE};
+@define-color surface1 ${SURFACE};
+@define-color text     ${TEXT};
+@define-color subtext0 ${SURFACE};
+@define-color subtext1 ${TEXT};
+@define-color mauve    ${ACCENT};
+@define-color red      ${RED};
+@define-color yellow   ${YELLOW};
+@define-color green    ${GREEN};
+@define-color blue     ${BLUE};
+EOF
+fi
+
 # Symlink
 ln -sf "$WAYBAR_THEME" "$WAYBAR_COLORS_DIR/current.css"
 ln -sf "$HYPR_THEME" "$HYPR_COLORS_DIR/current.lua"
 ln -sf "$KITTY_THEME" "$HOME/.config/kitty/colors.conf"
+ln -sf "$SWAYNC_THEME" "$SWAYNC_COLORS_DIR/current.css"
 
 # Reload Waybar CSS (hot reload)
 killall -SIGUSR2 waybar
@@ -128,3 +151,9 @@ hyprctl reload
 
 # Reload Kitty (all instances)
 killall -SIGUSR1 kitty 2>/dev/null
+
+# Reload swaync
+swaync-client --reload-config 2>/dev/null || true
+
+# Restart wob daemon with new theme colors
+~/.config/scripts/wob-daemon.sh &

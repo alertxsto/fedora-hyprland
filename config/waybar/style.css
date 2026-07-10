@@ -1,8 +1,9 @@
 @import "colors/current.css";
 
+/* ── Reset ───────────────────────────────────────────────── */
 * {
     font-family: "FiraCode Nerd Font", "MesloLGS NF", "Fira Code", sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     border: none;
     border-radius: 0;
@@ -11,101 +12,166 @@
     padding: 0;
 }
 
+/* ── Bar background: fully transparent ───────────────────── */
 window#waybar {
-    /* Full width transparent background */
     background: transparent;
     color: @text;
 }
 
+/* ── Tooltips ────────────────────────────────────────────── */
 tooltip {
     background: @base;
-    border: 2px solid @mauve;
+    border: 1px solid @mauve;
     border-radius: 12px;
+    color: @text;
 }
-
 tooltip label {
     color: @text;
 }
 
-/* 
-  Square shape for widgets.
-  We give margins to separate them but keep the edges sharp.
-*/
-#window, #clock, #cpu, #memory, #pulseaudio, #bluetooth, #network, #power-profiles-daemon, #battery, #tray {
-    background: @base;
-    color: @mauve;
-    border-radius: 0;
-    padding: 4px 14px;
-    margin: 6px 4px;
-    border-bottom: 2px solid transparent;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-    transition: all 0.2s ease-in-out;
-}
+/* ══════════════════════════════════════════════════════════
+   LEFT ISLAND — Workspaces + Window Title
+   ══════════════════════════════════════════════════════════ */
 
-/* Add some hover animation for all blocks */
-#window:hover, #clock:hover, #cpu:hover, #memory:hover, #pulseaudio:hover, #bluetooth:hover, #network:hover, #power-profiles-daemon:hover, #battery:hover, #tray:hover {
-    background: @surface0;
-    border-bottom: 2px solid @lavender;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-}
-
-/* Specific colors for specific modules to make them pop */
 #workspaces {
+    background: @base;
+    border-radius: 14px;
+    margin: 6px 0 6px 10px;
+    padding: 0 6px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+#workspaces button {
+    background: transparent;
+    color: @text;
+    opacity: 0.4;
+    border-radius: 10px;
+    padding: 2px 11px;
+    margin: 4px 2px;
+    min-width: 22px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#workspaces button:hover {
+    background: @surface0;
+    color: @text;
+    opacity: 0.8;
+}
+
+#workspaces button.active {
+    background: @mauve;
+    color: @base;
+    opacity: 1;
+    box-shadow: 0 0 14px rgba(198, 160, 246, 0.45);
+}
+
+#workspaces button.urgent {
+    background: @red;
+    color: @base;
+    opacity: 1;
+    animation: blink 0.5s linear infinite;
+}
+
+#window {
+    background: @base;
+    color: @text;
+    border-radius: 14px;
+    margin: 6px 0 6px 4px;
+    padding: 0 18px;
+    font-style: italic;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    transition: color 0.2s ease;
+}
+
+/* Hide window island when no window is focused */
+window#waybar.empty #window {
+    background: transparent;
+    box-shadow: none;
     padding: 0;
     margin: 0;
 }
 
-#workspaces button {
-    background: @base;
-    padding: 4px 12px;
-    margin: 6px 4px;
-    color: @surface2;
-    border-radius: 0;
-    border-bottom: 2px solid transparent;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
-}
-
-#workspaces button:hover {
-    background: @surface1;
-    color: @text;
-    border-bottom: 2px solid @text;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.4);
-    text-shadow: 0 0 5px rgba(202, 211, 245, 0.5);
-}
-
-#workspaces button.active {
-    color: @mauve;
-    border-bottom: 2px solid @mauve;
-    text-shadow: 0 0 5px rgba(198, 160, 246, 0.6);
-}
-
-#workspaces button.urgent {
-    color: @red;
-    border-bottom: 2px solid @red;
-}
+/* ══════════════════════════════════════════════════════════
+   CENTER ISLAND — Clock
+   ══════════════════════════════════════════════════════════ */
 
 #clock {
-    font-size: 15px;
+    background: @base;
+    color: @text;
+    border-radius: 14px;
+    margin: 6px 4px;
+    padding: 0 24px;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
 }
 
+/* ══════════════════════════════════════════════════════════
+   RIGHT ISLAND — System modules
+   Trick: all modules share @base background; first gets
+   rounded-left, last gets rounded-right → looks like 1 block
+   ══════════════════════════════════════════════════════════ */
+
+/* Shared style for all right-island modules */
+#cpu,
+#memory,
+#pulseaudio,
+#bluetooth,
+#network,
+#power-profiles-daemon,
+#battery,
+#custom-swaync,
+#tray {
+    background: @base;
+    color: @text;
+    border-radius: 0;
+    margin: 6px 0;
+    padding: 0 13px;
+}
+
+/* First module: rounded left */
+#cpu {
+    border-radius: 14px 0 0 14px;
+    margin-left: 8px;
+    padding-left: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Last module: rounded right → swaync then tray */
+#tray {
+    border-radius: 0;
+    padding: 0 10px;
+}
+
+#custom-swaync {
+    border-radius: 0 14px 14px 0;
+    margin-right: 10px;
+    padding-right: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+    color: @text;
+    opacity: 0.8;
+}
+
+/* swaync with unread notifications */
+#custom-swaync.notification {
+    color: @red;
+    opacity: 1;
+}
+
+/* swaync DND (silent) mode */
+#custom-swaync.dnd-none,
+#custom-swaync.dnd-notification {
+    color: @subtext0;
+    opacity: 0.6;
+}
+
+/* Module-specific colors */
 #pulseaudio.muted {
-    color: @surface2;
+    color: @subtext0;
 }
 
 #network.disconnected {
-    color: @red;
-}
-
-#power-profiles-daemon.power-saver {
-    color: @green;
-}
-
-#power-profiles-daemon.balanced {
-    color: @blue;
-}
-
-#power-profiles-daemon.performance {
     color: @red;
 }
 
@@ -113,7 +179,8 @@ tooltip label {
     color: @green;
 }
 
-#battery.charging, #battery.plugged {
+#battery.charging,
+#battery.plugged {
     color: @yellow;
 }
 
@@ -126,22 +193,21 @@ tooltip label {
     animation: blink 0.5s linear infinite;
 }
 
+#power-profiles-daemon.power-saver  { color: @green; }
+#power-profiles-daemon.balanced     { color: @blue;  }
+#power-profiles-daemon.performance  { color: @red;   }
+
+/* Tray specifics */
+#tray > .passive        { -gtk-icon-effect: dim; }
+#tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: @red;
+}
+
+/* ── Animations ───────────────────────────────────────────── */
 @keyframes blink {
     to {
         background-color: @red;
         color: @base;
     }
-}
-
-#tray {
-    padding: 4px 12px;
-}
-
-#tray > .passive {
-    -gtk-icon-effect: dim;
-}
-
-#tray > .needs-attention {
-    -gtk-icon-effect: highlight;
-    background-color: @red;
 }

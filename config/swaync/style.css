@@ -1,0 +1,347 @@
+/* ══════════════════════════════════════════════════════════
+   swaync/style.css — Premium Floating Islands design
+   Colors via @import from colors/current.css (auto-themed)
+   ══════════════════════════════════════════════════════════ */
+@import url("colors/current.css");
+
+/* ── Reset ───────────────────────────────────────────────── */
+* {
+    font-family: "FiraCode Nerd Font", "MesloLGS NF", "Fira Code", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NOTIFICATION POPUPS (top-right floating cards)
+   ══════════════════════════════════════════════════════════ */
+
+.notification-row {
+    outline: none;
+    margin: 6px 10px;
+}
+
+.notification-row:hover {
+    opacity: 1;
+}
+
+.notification {
+    border-radius: 16px;
+    background: @base;
+    border: 1px solid @surface0;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    padding: 0;
+}
+
+.notification-content {
+    padding: 14px 16px 12px;
+}
+
+/* Default click target */
+.notification-default-action {
+    border-radius: 16px;
+    background: transparent;
+    color: @text;
+    padding: 0;
+}
+
+.notification-default-action:hover {
+    background: @surface0;
+    border-radius: 16px;
+}
+
+/* ── Notification text ───────────────────────── */
+.summary {
+    font-size: 13px;
+    font-weight: bold;
+    color: @text;
+}
+
+.body {
+    font-size: 12px;
+    color: @subtext1;
+    margin-top: 2px;
+}
+
+.app-name {
+    font-size: 11px;
+    color: @subtext0;
+    font-weight: normal;
+}
+
+.time {
+    font-size: 10px;
+    color: @subtext0;
+    font-weight: normal;
+}
+
+/* ── Notification icon ───────────────────────── */
+.notification-icon {
+    margin-right: 14px;
+}
+
+/* ── Close button ────────────────────────────── */
+.close-button {
+    background: @surface1;
+    color: @subtext0;
+    border-radius: 50%;
+    padding: 0;
+    margin: 8px 8px 0 0;
+    min-height: 20px;
+    min-width: 20px;
+    font-size: 10px;
+}
+
+.close-button:hover {
+    background: @red;
+    color: @base;
+}
+
+/* ── Action buttons ──────────────────────────── */
+.notification-action {
+    background: @surface0;
+    color: @text;
+    border-radius: 8px;
+    padding: 5px 14px;
+    margin: 0 6px 10px;
+    font-size: 12px;
+}
+
+.notification-action:hover {
+    background: @mauve;
+    color: @base;
+}
+
+/* ── Progress bar inside notification (OSD) ──── */
+progressbar {
+    margin-top: 8px;
+    border-radius: 8px;
+}
+
+progressbar > trough {
+    background: @surface0;
+    border-radius: 8px;
+    min-height: 8px;
+}
+
+progressbar > trough > progress {
+    background: @mauve;
+    border-radius: 8px;
+    min-height: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   CONTROL CENTER PANEL
+   ══════════════════════════════════════════════════════════ */
+
+.control-center {
+    background: @base;
+    border-radius: 18px;
+    border: 1px solid @surface0;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
+    margin: 10px;
+}
+
+.control-center-list {
+    background: transparent;
+}
+
+.control-center-list-placeholder {
+    color: @subtext0;
+    font-size: 13px;
+    padding: 20px;
+}
+
+/* Notifications inside panel */
+.control-center .notification-row {
+    margin: 4px 8px;
+}
+
+.control-center .notification {
+    background: @mantle;
+    border: 1px solid @surface0;
+}
+
+.control-center .notification:hover {
+    background: @surface0;
+}
+
+/* ── Title widget ────────────────────────────── */
+.widget-title {
+    background: @base;
+    color: @text;
+    font-size: 15px;
+    font-weight: bold;
+    padding: 18px 18px 10px;
+    border-radius: 18px 18px 0 0;
+}
+
+.widget-title button {
+    background: @surface0;
+    color: @subtext1;
+    border-radius: 10px;
+    padding: 4px 14px;
+    font-size: 11px;
+    font-weight: bold;
+    min-height: 28px;
+}
+
+.widget-title button:hover {
+    background: @red;
+    color: @base;
+}
+
+/* ── Separator between widgets ───────────────── */
+.widget-separator {
+    background: @surface0;
+    min-height: 1px;
+    margin: 0 16px;
+}
+
+/* ── DND (Do Not Disturb) toggle ─────────────── */
+.widget-dnd {
+    background: @mantle;
+    padding: 12px 18px;
+    color: @text;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.widget-dnd > switch {
+    border-radius: 14px;
+    background: @surface1;
+    border: none;
+    min-height: 26px;
+    min-width: 52px;
+    transition: background 0.3s ease;
+}
+
+.widget-dnd > switch:checked {
+    background: @mauve;
+}
+
+.widget-dnd > switch slider {
+    background: @text;
+    border-radius: 50%;
+    min-height: 20px;
+    min-width: 20px;
+    margin: 3px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* ── Volume slider ───────────────────────────── */
+.widget-volume {
+    background: @mantle;
+    padding: 10px 18px 14px;
+    color: @text;
+}
+
+.widget-volume > box > button {
+    background: transparent;
+    color: @mauve;
+    font-size: 16px;
+    padding: 0 6px;
+    min-width: 28px;
+}
+
+.widget-volume > box > button:hover {
+    color: @text;
+}
+
+.widget-volume scale {
+    padding: 0;
+}
+
+.widget-volume scale trough {
+    background: @surface0;
+    border-radius: 6px;
+    min-height: 6px;
+}
+
+.widget-volume scale trough highlight {
+    background: @mauve;
+    border-radius: 6px;
+}
+
+.widget-volume scale slider {
+    background: @mauve;
+    border-radius: 50%;
+    min-height: 14px;
+    min-width: 14px;
+    box-shadow: 0 0 6px rgba(198, 160, 246, 0.4);
+}
+
+/* ── Backlight/Brightness slider ─────────────── */
+.widget-backlight {
+    background: @mantle;
+    padding: 10px 18px 14px;
+    color: @text;
+}
+
+.widget-backlight > box > button {
+    background: transparent;
+    color: @yellow;
+    font-size: 16px;
+    padding: 0 6px;
+    min-width: 28px;
+}
+
+.widget-backlight scale trough {
+    background: @surface0;
+    border-radius: 6px;
+    min-height: 6px;
+}
+
+.widget-backlight scale trough highlight {
+    background: @yellow;
+    border-radius: 6px;
+}
+
+.widget-backlight scale slider {
+    background: @yellow;
+    border-radius: 50%;
+    min-height: 14px;
+    min-width: 14px;
+}
+
+/* ── MPRIS media player ──────────────────────── */
+.widget-mpris {
+    background: @mantle;
+    padding: 12px 18px;
+}
+
+.widget-mpris-player {
+    background: @surface0;
+    border-radius: 14px;
+    padding: 12px;
+    margin: 4px 0;
+}
+
+.widget-mpris-title {
+    font-weight: bold;
+    font-size: 13px;
+    color: @text;
+}
+
+.widget-mpris-subtitle {
+    font-size: 11px;
+    color: @subtext1;
+    margin-top: 2px;
+}
+
+.widget-mpris > box > button {
+    background: @surface1;
+    color: @text;
+    border-radius: 50%;
+    padding: 6px;
+    margin: 0 3px;
+    min-width: 32px;
+    min-height: 32px;
+}
+
+.widget-mpris > box > button:hover {
+    background: @mauve;
+    color: @base;
+}

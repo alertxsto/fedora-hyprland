@@ -104,7 +104,11 @@ FEDORA_PKGS=(
     ImageMagick pipewire wireplumber
     playerctl brightnessctl flameshot
     eza bat ripgrep fd-find zoxide git-delta
-    papirus-icon-theme jetbrains-mono-fonts-all
+    papirus-icon-theme
+    hyprpolkitagent                           # polkit agent — required for file manager partition mounting
+    SwayNotificationCenter                    # notification daemon with panel, DND, silent mode
+    libnotify                                 # notify-send — used by apps to send desktop notifications
+    wob                                       # Wayland overlay bar — volume/brightness OSD
 )
 
 OPENSUSE_PKGS=(
@@ -114,6 +118,10 @@ OPENSUSE_PKGS=(
     playerctl brightnessctl flameshot
     eza bat ripgrep fd zoxide git-delta
     papirus-icon-theme
+    hyprpolkitagent                           # polkit agent — required for file manager partition mounting
+    SwayNotificationCenter                    # notification daemon with panel, DND, silent mode
+    libnotify-tools                           # notify-send — used by apps to send desktop notifications
+    wob                                       # Wayland overlay bar — volume/brightness OSD
 )
 
 case "$DISTRO" in
@@ -129,7 +137,41 @@ esac
 ok "Packages installed."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [2] Install FiraCode Nerd Font
+# [2] Polkit rule — allow wheel-group users to mount drives without password
+# ═════════════════════════════════════════════════════════════════════════════
+step "Configuring polkit rule for drive mounting"
+
+POLKIT_RULE_DIR="/etc/polkit-1/rules.d"
+POLKIT_RULE_FILE="$POLKIT_RULE_DIR/10-udisks2-allow-mount.rules"
+
+if [ -f "$POLKIT_RULE_FILE" ]; then
+    ok "Polkit rule already exists — skipping."
+else
+    info "Writing polkit rule to $POLKIT_RULE_FILE ..."
+    sudo tee "$POLKIT_RULE_FILE" > /dev/null << 'POLKIT_EOF'
+// Allow users in the wheel group to mount/unmount drives without password.
+// This is required for file managers (Thunar, Nautilus, Dolphin) to work
+// on standalone Wayland compositors like Hyprland.
+polkit.addRule(function(action, subject) {
+    var mountActions = [
+        "org.freedesktop.udisks2.filesystem-mount",
+        "org.freedesktop.udisks2.filesystem-mount-system",
+        "org.freedesktop.udisks2.filesystem-unmount-others",
+        "org.freedesktop.udisks2.encrypted-unlock",
+        "org.freedesktop.udisks2.eject-media",
+        "org.freedesktop.udisks2.power-off-drive"
+    ];
+    if (mountActions.indexOf(action.id) !== -1 && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+POLKIT_EOF
+    sudo systemctl restart polkit 2>/dev/null || true
+    ok "Polkit rule created and polkit restarted."
+fi
+
+# ═════════════════════════════════════════════════════════════════════════════
+# [3] Install FiraCode Nerd Font
 # ═════════════════════════════════════════════════════════════════════════════
 step "Installing FiraCode Nerd Font"
 
@@ -162,11 +204,11 @@ else
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [3] Set up directories
+# [4] Set up directories
 # ═════════════════════════════════════════════════════════════════════════════
 step "Setting up directories"
 
-mkdir -p "$HOME/.config/systemd/user"
+mkdir -p "$HOME/.config/systemd/user/graphical-session.target.wants"
 mkdir -p "$HOME/.config/hypr/colors"
 mkdir -p "$HOME/.config/waybar/colors"
 mkdir -p "$HOME/.config/kitty/colors"
@@ -180,17 +222,21 @@ EOF
 ok "Directories and icon theme ready."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [4] Deploy config files
+# [5] Deploy config files
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying config files"
 
-for app in hypr waybar rofi kitty ghostty fish nvim fastfetch btop scripts gtk-3.0 Thunar; do
+for app in hypr waybar rofi kitty fish nvim fastfetch btop scripts gtk-3.0 Thunar swaync; do
     src="$DOTFILES/config/$app"
     dst="$HOME/.config/$app"
     if [ -d "$src" ]; then
         deploy_link "$src" "$dst"
     fi
 done
+
+# Ensure all scripts are executable
+chmod +x "$HOME/.config/scripts/"*.sh 2>/dev/null || true
+ok "Scripts marked executable."
 
 # Standalone files
 for f in starship.toml; do
@@ -214,17 +260,24 @@ if [ -d "$DOTFILES/bin" ]; then
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [5] Set up theme defaults
+# [6] Set up theme defaults
 # ═════════════════════════════════════════════════════════════════════════════
 step "Setting up theme defaults (Catppuccin-Dark)"
 
+# Hyprland border color
 ln -sf "$HOME/.config/hypr/colors/Catppuccin-Dark.lua"   "$HOME/.config/hypr/colors/current.lua"
+# Waybar CSS color variables
 ln -sf "$HOME/.config/waybar/colors/Catppuccin-Dark.css"  "$HOME/.config/waybar/colors/current.css"
+# Kitty terminal colors
 ln -sf "$HOME/.config/kitty/colors/Catppuccin-Dark.conf"  "$HOME/.config/kitty/colors.conf"
+# swaync panel colors (inside repo dir since swaync/ is a full dir symlink)
+ln -sf "Catppuccin-Dark.css" "$HOME/.config/swaync/colors/current.css" 2>/dev/null || \
+    ln -sf "$DOTFILES/config/swaync/colors/Catppuccin-Dark.css" \
+            "$DOTFILES/config/swaync/colors/current.css"
 ok "Theme defaults set."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [6] Deploy Wallpapers
+# [7] Deploy Wallpapers
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying wallpapers"
 
@@ -241,7 +294,7 @@ if [ -d "$WALLPAPERS_SRC" ]; then
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [7] Enable systemd services
+# [8] Enable systemd services
 # ═════════════════════════════════════════════════════════════════════════════
 step "Enabling systemd user services"
 

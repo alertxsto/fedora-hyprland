@@ -5,7 +5,9 @@
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
-    "height": 38,
+    "height": 48,
+    "spacing": 0,
+
     "modules-left": [
         "hyprland/workspaces",
         "hyprland/window"
@@ -21,13 +23,10 @@
         "network",
         "power-profiles-daemon",
         "battery",
+        "custom/swaync",
         "tray"
     ],
-    
-    "hyprland/window": {
-        "format": "{}",
-        "max-length": 50
-    },
+
     "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
@@ -39,24 +38,34 @@
             "default": ""
         }
     },
+
+    "hyprland/window": {
+        "format": "{}",
+        "max-length": 60,
+        "separate-outputs": true
+    },
+
     "clock": {
-        "format": "  {:%H:%M    %e %b}",
+        "format": "  {:%H:%M   %a, %d %b}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
+
     "cpu": {
-        "interval": 10,
-        "format": "  {}%",
+        "interval": 5,
+        "format": "  {usage}%",
         "max-length": 10
     },
+
     "memory": {
-        "interval": 30,
-        "format": "  {}%",
+        "interval": 10,
+        "format": "  {used:.1f}G",
         "max-length": 10
     },
+
     "pulseaudio": {
         "format": "{icon}  {volume}%",
         "format-bluetooth": "{icon}  {volume}%",
-        "format-muted": " Muted",
+        "format-muted": "󰝟 Muted",
         "format-icons": {
             "headphone": "",
             "hands-free": "",
@@ -66,30 +75,32 @@
             "car": "",
             "default": ["", ""]
         },
-        "scroll-step": 1,
+        "scroll-step": 2,
         "on-click": "pavucontrol"
     },
+
     "bluetooth": {
-        "on-click": "kitty -o initial_window_width=800 -o initial_window_height=500 -o remember_window_size=no --class kitty-bluetui -e bluetui",
         "format": " {status}",
-        "format-disabled": "󰂲 Disabled",
+        "format-disabled": "󰂲 Off",
         "format-connected": " {device_alias}",
         "format-connected-battery": " {device_alias} {device_battery_percentage}%",
         "tooltip-format": "{controller_alias}\t{controller_address}\n\n{num_connections} connected",
         "tooltip-format-connected": "{controller_alias}\t{controller_address}\n\n{num_connections} connected\n\n{device_enumerate}",
         "tooltip-format-enumerate-connected": "{device_alias}\t{device_address}",
         "tooltip-format-enumerate-connected-battery": "{device_alias}\t{device_address}\t{device_battery_percentage}%",
-        "on-click": "kitty -e bluetui"
+        "on-click": "kitty -o initial_window_width=800 -o initial_window_height=500 -o remember_window_size=no --class kitty-bluetui -e bluetui"
     },
+
     "network": {
-        "on-click": "kitty -o initial_window_width=800 -o initial_window_height=500 -o remember_window_size=no --class kitty-impala -e impala-nm",
         "format-wifi": "{icon}  {essid}",
         "format-icons": ["󰤯", "󰤟", "󰤢", "󰤥", "󰤨"],
-        "format-ethernet": "  {ipaddr}/{cidr}",
-        "tooltip-format": "  {ifname} via {gwaddr}",
-        "format-linked": "  {ifname} (No IP)",
-        "format-disconnected": "⚠  Disconnected"
+        "format-ethernet": "󰈀  {ipaddr}/{cidr}",
+        "tooltip-format": "󰈀  {ifname} via {gwaddr}",
+        "format-linked": "󰈀  {ifname} (No IP)",
+        "format-disconnected": "⚠  Disconnected",
+        "on-click": "kitty -o initial_window_width=800 -o initial_window_height=500 -o remember_window_size=no --class kitty-impala -e impala-nm"
     },
+
     "battery": {
         "states": {
             "warning": 30,
@@ -101,6 +112,7 @@
         "format-alt": "{icon}  {time}",
         "format-icons": ["", "", "", "", ""]
     },
+
     "power-profiles-daemon": {
         "format": "{icon}",
         "tooltip-format": "Power profile: {profile}\nDriver: {driver}",
@@ -112,8 +124,30 @@
             "power-saver": ""
         }
     },
+
     "tray": {
-        "icon-size": 20,
-        "spacing": 10
+        "icon-size": 18,
+        "spacing": 8
+    },
+
+    "custom/swaync": {
+        "tooltip": false,
+        "format": "{icon}{text}",
+        "format-icons": {
+            "notification":          "<span foreground='#ed8796'>󰂚</span>",
+            "none":                  "󰂜",
+            "dnd-notification":     "<span foreground='#ed8796'>󱏧</span>",
+            "dnd-none":              "󱏨",
+            "inhibited-notification": "<span foreground='#ed8796'>󰂚</span>",
+            "inhibited-none":        "󰂜",
+            "dnd-inhibited-notification": "<span foreground='#ed8796'>󱏧</span>",
+            "dnd-inhibited-none":    "󱏨"
+        },
+        "return-type": "json",
+        "exec-if": "which swaync-client",
+        "exec": "swaync-client -swb",
+        "on-click": "swaync-client -t -sw",
+        "on-click-right": "swaync-client -d -sw",
+        "escape": true
     }
 }
