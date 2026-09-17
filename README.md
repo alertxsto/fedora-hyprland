@@ -14,7 +14,7 @@
 ![Fedora](https://img.shields.io/badge/Fedora-supported-51a2da?style=for-the-badge&logo=fedora&logoColor=white)
 ![openSUSE](https://img.shields.io/badge/openSUSE-supported-73ba25?style=for-the-badge&logo=opensuse&logoColor=white)
 ![License](https://img.shields.io/badge/license-MIT-cba6f7?style=for-the-badge)
-![Wallpapers](https://img.shields.io/badge/wallpapers-230%2B-f5c2e7?style=for-the-badge)
+![Wallpapers](https://img.shields.io/badge/wallpapers-90-f5c2e7?style=for-the-badge)
 
 </div>
 
@@ -23,7 +23,7 @@
 Personal dotfiles for **Hyprland** on Fedora Linux (also works on openSUSE).
 A wallpaper-driven theme engine that auto-syncs colors across your entire desktop.
 
-> 🖼️ **Live preview** — bar on top, clean borders, zero rounding, full-width transparency.
+> 🖼️ **Live preview** — floating island bar, blurred windows, soft shadows.
 
 ---
 
@@ -40,6 +40,9 @@ Pictures/Wallpapers/<Theme>/<Variant>/<wallpaper>
 | 🪟 **Hyprland** | Active window border color |
 | 📊 **Waybar** | Background, text, accent, surface |
 | 💻 **Kitty** | Terminal color scheme |
+| 👻 **Ghostty** | Terminal theme (reload via SIGUSR2) |
+| 🔔 **SwayNC** | Notification cards, sliders, DND |
+| 🚀 **Rofi** | Launcher + wallpaper picker |
 | 📝 **Neovim** | Colorscheme + transparency |
 
 ### Supported themes
@@ -55,7 +58,7 @@ Pictures/Wallpapers/<Theme>/<Variant>/<wallpaper>
 | Osaka | ✅ | — |
 | Rosé Pine | ✅ | — |
 
-**🖼️ 230+ wallpapers** included across all themes and variants.
+**🖼️ 90 wallpapers** included across all themes and variants.
 
 ---
 
@@ -67,7 +70,7 @@ Pictures/Wallpapers/<Theme>/<Variant>/<wallpaper>
 | ⏺️ **Center** | Clock (🕐 HH:MM · 📅 DD Mon) |
 | ➡️ **Right** | 🧠 CPU · 💾 Memory · 🔊 PulseAudio · 🔵 Bluetooth · 🌐 Network · ⏻ Power · 🔋 Battery · 📥 Tray |
 
-- **Height:** 38px · **Font:** 14px FiraCode Nerd Font
+- **Height:** 48px · **Font:** 13px FiraCode Nerd Font
 - Smooth hover animations, color transitions
 - Theme-aware via `colors/current.css`
 
@@ -138,14 +141,15 @@ cd ~/dotfiles
 
 The script will:
 
-1. 📥 Install required packages (dnf / zypper)
-2. 🔤 Install FiraCode Nerd Font
-3. 📁 Create directory structure
-4. 🔗 **Symlink** all configs to `~/.config/`
-5. 🎨 Set default theme (Catppuccin-Dark)
-6. 🖼️ **Link wallpapers** to `~/Pictures/Wallpapers/`
-7. 🖱️ Set up cursor theme (`breeze_cursors`)
-8. ⚙️ Enable systemd user services
+1. 📥 Enable the required COPR repos (Fedora only — see below)
+2. 📦 Install packages (dnf / zypper)
+3. 🔤 Install FiraCode Nerd Font
+4. 📁 Create directory structure
+5. 🔗 **Symlink** all configs to `~/.config/`
+6. 🎨 Set default theme (Catppuccin-Dark)
+7. 🖼️ **Link wallpapers** to `~/Pictures/Wallpapers/`
+8. 🖱️ Set up cursor theme (`breeze_cursors`)
+9. 🎭 Install the Catppuccin GTK theme
 
 Then activate the theme engine:
 
@@ -159,17 +163,33 @@ Or set one directly:
 awww img ~/Pictures/Wallpapers/Catppuccin/Dark/example.png -t fade
 ```
 
+### 📦 COPR repos (Fedora)
+
+Hyprland and friends are not in the Fedora repositories. The installer enables
+these COPRs automatically:
+
+| COPR | Provides |
+|------|----------|
+| `lionheartp/Hyprland` | hyprland, hyprpolkitagent, xdg-desktop-portal-hyprland, hyprshutdown, waybar-git, awww |
+| `atim/starship` | starship prompt |
+| `ponesicek/ghostty-bin` | ghostty terminal |
+
+`waybar-git` is used instead of Fedora's `waybar` because the packaged version
+predates Lua-based Hyprland configs. It `Obsoletes: waybar`, so the swap is clean.
+
 ### 📋 Dependencies
 
 | Category | Packages |
 |-----------|----------|
-| **Runtime** | `hyprland waybar rofi kitty fish starship fastfetch btop neovim thunar` |
-| **Audio** | `pipewire wireplumber playerctl` |
-| **Hardware** | `brightnessctl` |
-| **Graphics** | `ImageMagick` (thumbnail gen) |
+| **Runtime** | `hyprland waybar-git rofi kitty ghostty fish starship fastfetch btop neovim thunar exo` |
+| **Wayland** | `xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent hyprland-guiutils hyprshutdown` |
+| **Audio** | `pipewire wireplumber playerctl pavucontrol` |
+| **Hardware** | `brightnessctl power-profiles-daemon` |
+| **Graphics** | `ImageMagick` (thumbnail gen), `awww` (wallpaper) |
 | **Shell** | `eza bat ripgrep fd zoxide git-delta` |
+| **Desktop** | `SwayNotificationCenter libnotify wob` |
 
-✅ All auto-installed on both Fedora and openSUSE Tumbleweed.
+✅ Auto-installed on Fedora. On openSUSE, `hyprland` comes from the distro repo.
 
 ### 🖱️ Cursor
 
@@ -191,11 +211,12 @@ dotfiles/
 │   ├── bluetui                   # Bluetooth TUI
 │   └── impala-nm                 # NetworkManager TUI
 ├── config/
-│   ├── hypr/                     # Hyprland + theme colors
-│   ├── waybar/                   # Bar + theme colors
-│   ├── rofi/                     # Launcher + bgselector
+│   ├── hypr/                     # Hyprland (Lua) + theme colors
+│   ├── waybar/                   # Floating island bar + theme colors
+│   ├── rofi/                     # Launcher + bgselector (theme-synced)
 │   ├── kitty/                    # Terminal + theme colors
-│   ├── ghostty/
+│   ├── ghostty/                  # Terminal + theme file
+│   ├── swaync/                   # Notification center + theme colors
 │   ├── fish/                     # Shell config
 │   ├── starship.toml
 │   ├── nvim/                     # LazyVim + auto theme
@@ -203,12 +224,15 @@ dotfiles/
 │   ├── btop/
 │   ├── scripts/                  # Theme engine
 │   │   ├── bgselector.sh
-│   │   └── theme-sync.sh
+│   │   ├── theme-sync.sh
+│   │   ├── volume.sh
+│   │   ├── brightness.sh
+│   │   └── wob-daemon.sh
 │   ├── gtk-3.0/
-│   ├── Thunar/
-│   └── systemd/user/
-├── Pictures/Wallpapers/          # 230+ wallpapers
+│   └── Thunar/
+├── Pictures/Wallpapers/          # 90 wallpapers
 ├── install.sh                    # Bootstrap
+├── LICENSE
 └── README.md
 ```
 
@@ -221,6 +245,9 @@ These are generated at runtime and **not** tracked:
 - `hypr/colors/current.lua`
 - `waybar/colors/current.css`
 - `kitty/colors.conf`
+- `swaync/colors/current.css`
+- `rofi/colors/current.rasi`
+- `ghostty/themes/current`
 - `fish/fish_variables`
 - `nvim/lazy-lock.json`
 - `gtk-3.0/colors.css`
@@ -228,5 +255,5 @@ These are generated at runtime and **not** tracked:
 ---
 
 <p align="center">
-  <sub>🐧 Hyprland · Fedora · Catppuccin · Lua config · Rofi · KDE cursor · awww</sub>
+  <sub>🐧 Hyprland · Fedora · Catppuccin · Lua config · Rofi · awww · swaync · wob</sub>
 </p>

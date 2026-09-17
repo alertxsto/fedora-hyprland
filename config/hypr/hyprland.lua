@@ -36,7 +36,7 @@ hl.monitor({
 
 -- Set programs that you use
 local terminal = "kitty"
-local fileManager = "nautilus"
+local fileManager = "thunar"
 local menu = "rofi -show drun"
 
 -------------------
@@ -64,7 +64,6 @@ hl.on("hyprland.start", function()
 
 	hl.exec_cmd("waybar")
 	hl.exec_cmd("awww-daemon")
-	hl.exec_cmd("systemctl --user start vicinae")
 	hl.exec_cmd("hyprctl setcursor breeze_cursors 24")
 end)
 
@@ -78,6 +77,11 @@ hl.env("XCURSOR_THEME", "breeze_cursors")
 hl.env("HYPRCURSOR_THEME", "breeze_cursors")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("HYPRCURSOR_SIZE", "24")
+
+-- Multi-GPU / hybrid laptops: uncomment and set your own device paths.
+-- AQ_DRM_DEVICES pins the DRM devices Hyprland uses (first = primary render).
+-- List yours with: ls -l /dev/dri/by-path/
+-- hl.env("AQ_DRM_DEVICES", "/dev/dri/by-path/pci-0000:00:02.0-card:/dev/dri/by-path/pci-0000:01:00.0-card")
 
 -----------------------
 ----- PERMISSIONS -----
@@ -276,7 +280,7 @@ local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
 -- closeWindowBind:set_enabled(false)
 hl.bind(
 	mainMod .. " + M",
-	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
+	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit")
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
@@ -394,13 +398,21 @@ hl.window_rule({
 	float = true,
 })
 
-hl.config({
-	windowrulev2 = {
-		"float, class:^(kitty-bluetui)$",
-		"size 800 500, class:^(kitty-bluetui)$",
-		"center, class:^(kitty-bluetui)$",
-		"float, class:^(kitty-impala)$",
-		"size 800 500, class:^(kitty-impala)$",
-		"center, class:^(kitty-impala)$",
-	},
+-- Floating helper windows: bluetui (bluetooth TUI) and impala-nm (network TUI)
+-- launched from the waybar modules. windowrulev2 was removed in 0.56; the
+-- Lua equivalent is hl.window_rule().
+hl.window_rule({
+	name = "float-bluetui",
+	match = { class = "^kitty-bluetui$" },
+	float = true,
+	size = { 800, 500 },
+	center = true,
+})
+
+hl.window_rule({
+	name = "float-impala",
+	match = { class = "^kitty-impala$" },
+	float = true,
+	size = { 800, 500 },
+	center = true,
 })

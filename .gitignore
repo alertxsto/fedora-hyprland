@@ -2,6 +2,9 @@
 config/hypr/colors/current.lua
 config/waybar/colors/current.css
 config/kitty/colors.conf
+config/swaync/colors/current.css
+config/rofi/colors/current.rasi
+config/ghostty/themes/current
 
 # Machine-specific
 config/fish/fish_variables

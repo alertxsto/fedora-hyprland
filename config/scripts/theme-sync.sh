@@ -32,13 +32,17 @@ WAYBAR_COLORS_DIR="$HOME/.config/waybar/colors"
 HYPR_COLORS_DIR="$HOME/.config/hypr/colors"
 KITTY_COLORS_DIR="$HOME/.config/kitty/colors"
 SWAYNC_COLORS_DIR="$HOME/.config/swaync/colors"
-mkdir -p "$SWAYNC_COLORS_DIR"
+ROFI_COLORS_DIR="$HOME/.config/rofi/colors"
+GHOSTTY_COLORS_DIR="$HOME/.config/ghostty/themes"
+mkdir -p "$SWAYNC_COLORS_DIR" "$ROFI_COLORS_DIR" "$GHOSTTY_COLORS_DIR"
 
 THEME_FILE_ID="${theme_name}-${variant}"
 WAYBAR_THEME="$WAYBAR_COLORS_DIR/$THEME_FILE_ID.css"
 HYPR_THEME="$HYPR_COLORS_DIR/$THEME_FILE_ID.lua"
 KITTY_THEME="$KITTY_COLORS_DIR/$THEME_FILE_ID.conf"
 SWAYNC_THEME="$SWAYNC_COLORS_DIR/$THEME_FILE_ID.css"
+ROFI_THEME="$ROFI_COLORS_DIR/$THEME_FILE_ID.rasi"
+GHOSTTY_THEME="$GHOSTTY_COLORS_DIR/$THEME_FILE_ID"
 
 # Default fallback colors
 BASE="#24273a"
@@ -120,7 +124,6 @@ fi
 
 # Generate swaync color CSS (same variables as waybar)
 if [ ! -f "$SWAYNC_THEME" ]; then
-    # Compute slightly darker mantle from BASE
     cat > "$SWAYNC_THEME" <<EOF
 @define-color base     ${BASE};
 @define-color mantle   ${BASE};
@@ -137,23 +140,76 @@ if [ ! -f "$SWAYNC_THEME" ]; then
 EOF
 fi
 
-# Symlink
-ln -sf "$WAYBAR_THEME" "$WAYBAR_COLORS_DIR/current.css"
-ln -sf "$HYPR_THEME" "$HYPR_COLORS_DIR/current.lua"
-ln -sf "$KITTY_THEME" "$HOME/.config/kitty/colors.conf"
-ln -sf "$SWAYNC_THEME" "$SWAYNC_COLORS_DIR/current.css"
+# Generate rofi color variables (same palette, consumed via @import)
+if [ ! -f "$ROFI_THEME" ]; then
+    cat > "$ROFI_THEME" <<EOF
+* {
+    bg:      ${BASE};
+    bg-alt:  ${SURFACE};
+    fg:      ${TEXT};
+    accent:  ${ACCENT};
+    urgent:  ${RED};
+    ok:      ${GREEN};
+    warn:    ${YELLOW};
+    info:    ${BLUE};
+    selected: ${ACCENT};
+    border:  ${ACCENT};
+}
+EOF
+fi
+
+# Generate ghostty theme (consumed via config-file in config.ghostty)
+if [ ! -f "$GHOSTTY_THEME" ]; then
+    cat > "$GHOSTTY_THEME" <<EOF
+background = ${BASE}
+foreground = ${TEXT}
+cursor-color = ${ACCENT}
+cursor-text = ${BASE}
+selection-background = ${ACCENT}
+selection-foreground = ${BASE}
+palette = 0=${SURFACE}
+palette = 1=${RED}
+palette = 2=${GREEN}
+palette = 3=${YELLOW}
+palette = 4=${BLUE}
+palette = 5=${ACCENT}
+palette = 6=${GREEN}
+palette = 7=${TEXT}
+palette = 8=${SURFACE}
+palette = 9=${RED}
+palette = 10=${GREEN}
+palette = 11=${YELLOW}
+palette = 12=${BLUE}
+palette = 13=${ACCENT}
+palette = 14=${GREEN}
+palette = 15=${TEXT}
+EOF
+fi
+
+# Symlink all theme consumers to the active theme
+ln -sf "$WAYBAR_THEME"  "$WAYBAR_COLORS_DIR/current.css"
+ln -sf "$HYPR_THEME"    "$HYPR_COLORS_DIR/current.lua"
+ln -sf "$KITTY_THEME"   "$HOME/.config/kitty/colors.conf"
+ln -sf "$SWAYNC_THEME"  "$SWAYNC_COLORS_DIR/current.css"
+ln -sf "$ROFI_THEME"    "$ROFI_COLORS_DIR/current.rasi"
+ln -sf "$GHOSTTY_THEME" "$GHOSTTY_COLORS_DIR/current"
 
 # Reload Waybar CSS (hot reload)
-killall -SIGUSR2 waybar
+killall -SIGUSR2 waybar 2>/dev/null
 
 # Reload Hyprland config
-hyprctl reload
+hyprctl reload 2>/dev/null
 
 # Reload Kitty (all instances)
 killall -SIGUSR1 kitty 2>/dev/null
 
+# Reload Ghostty (SIGUSR2 = reload config)
+killall -SIGUSR2 ghostty 2>/dev/null
+
 # Reload swaync
 swaync-client --reload-config 2>/dev/null || true
 
+# Rofi reads colors/current.rasi on next launch — nothing to reload.
+
 # Restart wob daemon with new theme colors
-~/.config/scripts/wob-daemon.sh &
+"$HOME/.config/scripts/wob-daemon.sh" &

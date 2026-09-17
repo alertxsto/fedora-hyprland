@@ -57,13 +57,36 @@ printf "${DIM}Repo: %s${NC}\n" "$DOTFILES"
 if [ -f /etc/fedora-release ]; then
     DISTRO="fedora"
     PKG_MGR="dnf"
+    FEDORA_VER="$(rpm -E %fedora)"
 elif [ -f /etc/os-release ] && grep -qi "suse\|opensuse" /etc/os-release; then
     DISTRO="opensuse"
     PKG_MGR="zypper"
 else
     die "Unsupported distro. Only Fedora and openSUSE are supported."
 fi
-ok "Detected: ${DISTRO}"
+ok "Detected: ${DISTRO}${FEDORA_VER:+ ${FEDORA_VER}}"
+
+# COPR repos required on Fedora: Hyprland stack, starship, ghostty.
+# hyprland / hyprpolkitagent / xdg-desktop-portal-hyprland / awww are NOT
+# in the Fedora repos; waybar-git ships the fix for Lua-based Hyprland configs.
+if [ "$DISTRO" = "fedora" ]; then
+    if ! dnf copr list 2>/dev/null | grep -q "lionheartp/Hyprland"; then
+        info "Enabling COPR: lionheartp/Hyprland (Hyprland stack + waybar-git + awww)"
+        sudo dnf -y copr enable lionheartp/Hyprland "fedora-${FEDORA_VER}-x86_64" || \
+            die "Failed to enable COPR lionheartp/Hyprland"
+    fi
+    if ! dnf copr list 2>/dev/null | grep -q "atim/starship"; then
+        info "Enabling COPR: atim/starship"
+        sudo dnf -y copr enable atim/starship "fedora-${FEDORA_VER}-x86_64" || \
+            warn "Failed to enable COPR atim/starship — starship will be skipped"
+    fi
+    if ! dnf copr list 2>/dev/null | grep -q "ponesicek/ghostty-bin"; then
+        info "Enabling COPR: ponesicek/ghostty-bin"
+        sudo dnf -y copr enable ponesicek/ghostty-bin "fedora-${FEDORA_VER}-x86_64" || \
+            warn "Failed to enable COPR ponesicek/ghostty-bin — ghostty will be skipped"
+    fi
+    ok "COPR repositories ready."
+fi
 
 # ── Backup helper ──
 BACKUP_DIR="$HOME/.dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
@@ -99,16 +122,28 @@ deploy_link() {
 step "Installing packages"
 
 FEDORA_PKGS=(
-    hyprland waybar rofi kitty fish
+    hyprland waybar-git rofi kitty fish
     starship fastfetch btop
     ImageMagick pipewire wireplumber
     playerctl brightnessctl flameshot
     eza bat ripgrep fd-find zoxide git-delta
     papirus-icon-theme
     hyprpolkitagent                           # polkit agent — required for file manager partition mounting
+    xdg-desktop-portal-hyprland               # screensharing + file pickers on Wayland
+    xdg-desktop-portal-gtk                    # GTK fallback portal (file chooser for GTK apps)
     SwayNotificationCenter                    # notification daemon with panel, DND, silent mode
     libnotify                                 # notify-send — used by apps to send desktop notifications
     wob                                       # Wayland overlay bar — volume/brightness OSD
+    awww                                      # wallpaper daemon (swww successor)
+    hyprland-guiutils                         # hyprland-share-picker and friends
+    hyprland-qt-support                       # Qt platform integration (qt6 apps theming)
+    hyprshutdown                              # graceful shutdown dialog (SUPER+M)
+    thunar exo                                # file manager + "Open Terminal Here" action
+    pavucontrol                               # pulseaudio/pipewire volume GUI (waybar click)
+    tuned-ppd                                 # provides the PowerProfiles D-Bus service on Fedora
+    rofi-themes                               # Arc-Dark + gruvbox themes shipped by Fedora
+    ghostty                                   # second terminal (theme-synced)
+    neovim                                    # LazyVim editor
 )
 
 OPENSUSE_PKGS=(
@@ -119,18 +154,26 @@ OPENSUSE_PKGS=(
     eza bat ripgrep fd zoxide git-delta
     papirus-icon-theme
     hyprpolkitagent                           # polkit agent — required for file manager partition mounting
+    xdg-desktop-portal-hyprland               # screensharing + file pickers on Wayland
+    xdg-desktop-portal-gtk                    # GTK fallback portal
     SwayNotificationCenter                    # notification daemon with panel, DND, silent mode
     libnotify-tools                           # notify-send — used by apps to send desktop notifications
     wob                                       # Wayland overlay bar — volume/brightness OSD
+    awww                                      # wallpaper daemon (swww successor)
+    hyprland-guiutils                         # hyprland-share-picker and friends
+    hyprshutdown                              # graceful shutdown dialog (SUPER+M)
+    thunar exo                                # file manager + "Open Terminal Here" action
+    pavucontrol                               # volume GUI (waybar click)
+    power-profiles-daemon                     # PowerProfiles D-Bus service (openSUSE)
+    neovim                                    # LazyVim editor
 )
 
 case "$DISTRO" in
     fedora)
-        sudo dnf install -y "${FEDORA_PKGS[@]}"
+        sudo dnf install -y --skip-unavailable "${FEDORA_PKGS[@]}"
         ;;
     opensuse)
         sudo zypper install -y "${OPENSUSE_PKGS[@]}"
-        sudo zypper install -y awww 2>/dev/null || warn "awww not in repos — install manually"
         ;;
 esac
 
@@ -226,7 +269,7 @@ ok "Directories and icon theme ready."
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying config files"
 
-for app in hypr waybar rofi kitty fish nvim fastfetch btop scripts gtk-3.0 Thunar swaync; do
+for app in hypr waybar rofi kitty ghostty fish nvim fastfetch btop scripts gtk-3.0 Thunar swaync; do
     src="$DOTFILES/config/$app"
     dst="$HOME/.config/$app"
     if [ -d "$src" ]; then
@@ -249,7 +292,15 @@ done
 
 # Systemd user services
 for f in "$DOTFILES"/config/systemd/user/graphical-session.target.wants/*; do
-    [ -f "$f" ] && ln -sf "$f" "$HOME/.config/systemd/user/graphical-session.target.wants/"
+    [ -e "$f" ] || continue
+    name="$(basename "$f")"
+    target="$HOME/.config/systemd/user/graphical-session.target.wants/$name"
+    # Skip dangling links (e.g. vicinae.service points at /usr/local/...)
+    if [ -L "$f" ] && [ ! -e "$f" ]; then
+        rm -f "$target"
+        continue
+    fi
+    ln -sf "$f" "$target"
 done
 ok "Systemd user service symlinks created."
 
@@ -260,7 +311,7 @@ if [ -d "$DOTFILES/bin" ]; then
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [6] Set up theme defaults
+# [6] Set up theme defaults (Catppuccin-Dark)
 # ═════════════════════════════════════════════════════════════════════════════
 step "Setting up theme defaults (Catppuccin-Dark)"
 
@@ -270,10 +321,10 @@ ln -sf "$HOME/.config/hypr/colors/Catppuccin-Dark.lua"   "$HOME/.config/hypr/col
 ln -sf "$HOME/.config/waybar/colors/Catppuccin-Dark.css"  "$HOME/.config/waybar/colors/current.css"
 # Kitty terminal colors
 ln -sf "$HOME/.config/kitty/colors/Catppuccin-Dark.conf"  "$HOME/.config/kitty/colors.conf"
-# swaync panel colors (inside repo dir since swaync/ is a full dir symlink)
-ln -sf "Catppuccin-Dark.css" "$HOME/.config/swaync/colors/current.css" 2>/dev/null || \
-    ln -sf "$DOTFILES/config/swaync/colors/Catppuccin-Dark.css" \
-            "$DOTFILES/config/swaync/colors/current.css"
+# swaync panel colors — relative link inside the symlinked swaync dir
+ln -sf "Catppuccin-Dark.css" "$HOME/.config/swaync/colors/current.css"
+# Rofi theme colors — consumed by @import in rofi/config.rasi
+ln -sf "Catppuccin-Dark.rasi" "$HOME/.config/rofi/colors/current.rasi"
 ok "Theme defaults set."
 
 # ═════════════════════════════════════════════════════════════════════════════
@@ -300,13 +351,33 @@ step "Enabling systemd user services"
 
 systemctl --user daemon-reload 2>/dev/null || true
 
-if [ -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.service" ]; then
-    systemctl --user enable vicinae.service 2>/dev/null || true
-    ok "vicinae.service enabled."
+if command -v awww-daemon &>/dev/null; then
+    info "awww-daemon will be started by Hyprland on login (hl.exec_cmd in hyprland.lua)."
 fi
 
-if command -v awww-daemon &>/dev/null; then
-    info "awww-daemon will be started by Hyprland on login (exec-once in hyprland.lua)."
+if [ -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.service" ]; then
+    warn "Stale vicinae.service link found — removing (vicinae is no longer used)."
+    rm -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.service"
+fi
+
+# ═════════════════════════════════════════════════════════════════════════════
+# [9] GTK theme (Catppuccin-Dark for GTK3/GTK4 apps)
+# ═════════════════════════════════════════════════════════════════════════════
+step "Installing Catppuccin GTK theme"
+
+GTK_THEME_DIR="$HOME/.themes/catppuccin-macchiato-mauve-standard+default"
+GTK_URL="https://github.com/catppuccin/gtk/releases/download/v1.0.3/catppuccin-macchiato-mauve-standard+default.zip"
+
+if [ -d "$GTK_THEME_DIR" ]; then
+    ok "Catppuccin GTK theme already installed."
+elif curl -fSL --retry 3 --retry-delay 5 -o /tmp/cat-gtk.zip "$GTK_URL"; then
+    mkdir -p "$HOME/.themes"
+    unzip -q -o /tmp/cat-gtk.zip -d /tmp/cat-gtk-extract
+    cp -r "/tmp/cat-gtk-extract/catppuccin-macchiato-mauve-standard+default" "$HOME/.themes/"
+    rm -rf /tmp/cat-gtk.zip /tmp/cat-gtk-extract
+    ok "Catppuccin GTK theme installed."
+else
+    warn "GTK theme download failed — install manually from github.com/catppuccin/gtk"
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════

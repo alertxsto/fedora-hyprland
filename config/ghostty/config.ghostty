@@ -1,2 +1,16 @@
+# Theme colors — written by theme-sync.sh, swapped per wallpaper.
+# The ? prefix keeps ghostty quiet when the file does not exist yet.
+config-file = ?themes/current
+
+font-family = FiraCode Nerd Font
+font-size = 12
+
 background-opacity = 0.88
 background-blur-radius = 50
+
+window-padding-x = 10
+window-padding-y = 8
+cursor-style = block
+copy-on-select = clipboard
+confirm-close-surface = false
+shell-integration = detect

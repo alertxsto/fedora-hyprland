@@ -107,7 +107,7 @@ while read -r img; do
 done < "$CACHE_INDEX" > "$rofi_input"
 
 # Show rofi and get selection
-selected=$(rofi -dmenu -show-icons -config "$HOME/.config/rofi/bgselector/style.rasi" < "$rofi_input")
+selected=$(rofi -dmenu -show-icons -theme "$HOME/.config/rofi/bgselector/style.rasi" < "$rofi_input")
 rm "$rofi_input"
 
 # Apply wallpaper
