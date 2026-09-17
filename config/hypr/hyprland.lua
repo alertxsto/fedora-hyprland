@@ -59,6 +59,9 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("/usr/libexec/hyprpolkitagent")
 	-- Notification daemon
 	hl.exec_cmd("swaync")
+	-- Clear rfkill soft-block on Wi-Fi/Bluetooth adapters (e.g. MT7921) so
+	-- bluetoothd catches the adapter and bluetui doesn't exit immediately.
+	hl.exec_cmd("~/.config/scripts/rfkill-unblock.sh")
 	-- Volume/brightness OSD (center-bottom bar, separate from notification list)
 	hl.exec_cmd("~/.config/scripts/wob-daemon.sh")
 

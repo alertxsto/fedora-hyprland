@@ -201,6 +201,19 @@ Cursor theme is set at three levels:
 
 All point to `breeze_cursors` (size 24).
 
+### 🔵 Bluetooth
+
+`bluetui` launches from the waybar Bluetooth module. Two things must be true or
+it exits immediately (the window appears to auto-close in milliseconds):
+
+1. `bluetooth.service` is running
+2. the adapter is not rfkill soft-blocked
+
+`install.sh` enables the service and grants the `wheel` group passwordless
+`rfkill`, and `~/.config/scripts/rfkill-unblock.sh` clears any soft-block at
+login. If the window still closes instantly, run `rfkill list bluetooth` to
+check the block state.
+
 ---
 
 ## 🗂️ Project Structure
@@ -225,6 +238,7 @@ dotfiles/
 │   ├── scripts/                  # Theme engine
 │   │   ├── bgselector.sh
 │   │   ├── theme-sync.sh
+│   │   ├── rfkill-unblock.sh
 │   │   ├── volume.sh
 │   │   ├── brightness.sh
 │   │   └── wob-daemon.sh

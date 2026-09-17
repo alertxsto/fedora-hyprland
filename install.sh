@@ -247,7 +247,44 @@ else
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [4] Set up directories
+# [4] Bluetooth — service + rfkill permissions
+# ═════════════════════════════════════════════════════════════════════════════
+step "Configuring Bluetooth"
+
+# bluetoothd must be running, otherwise bluetui exits immediately.
+if command -v bluetoothctl &>/dev/null || [ -f /usr/lib/systemd/system/bluetooth.service ]; then
+    if systemctl is-enabled bluetooth.service &>/dev/null; then
+        ok "bluetooth.service already enabled."
+    else
+        info "Enabling bluetooth.service ..."
+        sudo systemctl enable --now bluetooth.service || \
+            warn "Could not enable bluetooth.service — enable it manually."
+    fi
+fi
+
+# Some adapters (e.g. MediaTek MT7921) come up rfkill soft-blocked after a
+# cold boot. rfkill unblock needs root, so let wheel users toggle rfkill
+# without a password and clear the soft block at login via a user service.
+RFKILL_RULE_FILE="/etc/polkit-1/rules.d/10-rfkill-allow-wheel.rules"
+if [ -f "$RFKILL_RULE_FILE" ]; then
+    ok "rfkill polkit rule already exists — skipping."
+else
+    info "Allowing wheel group to use rfkill without password ..."
+    sudo tee "$RFKILL_RULE_FILE" > /dev/null << 'RFKILL_EOF'
+// Allow users in the wheel group to toggle rfkill (WiFi/Bluetooth) without
+// a password. Required so the login service can clear soft-blocks.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.rfkill" && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+RFKILL_EOF
+    sudo systemctl restart polkit 2>/dev/null || true
+    ok "rfkill polkit rule created."
+fi
+
+# ═════════════════════════════════════════════════════════════════════════════
+# [5] Set up directories
 # ═════════════════════════════════════════════════════════════════════════════
 step "Setting up directories"
 
@@ -265,7 +302,7 @@ EOF
 ok "Directories and icon theme ready."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [5] Deploy config files
+# [6] Deploy config files
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying config files"
 
@@ -310,8 +347,15 @@ if [ -d "$DOTFILES/bin" ]; then
     ok "Binaries installed (bluetui, impala-nm)."
 fi
 
+# Sanity-check bluetui: it exits instantly when the adapter is rfkill
+# soft-blocked or bluetoothd is down, which looks like the window
+# auto-closing. Surface the real reason at install time.
+if [ -x "$HOME/.local/bin/bluetui" ] && ! "$HOME/.local/bin/bluetui" --help >/dev/null 2>&1; then
+    warn "bluetui failed to start — see the error above (likely rfkill soft-blocked)."
+fi
+
 # ═════════════════════════════════════════════════════════════════════════════
-# [6] Set up theme defaults (Catppuccin-Dark)
+# [7] Set up theme defaults (Catppuccin-Dark)
 # ═════════════════════════════════════════════════════════════════════════════
 step "Setting up theme defaults (Catppuccin-Dark)"
 
@@ -328,7 +372,7 @@ ln -sf "Catppuccin-Dark.rasi" "$HOME/.config/rofi/colors/current.rasi"
 ok "Theme defaults set."
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [7] Deploy Wallpapers
+# [8] Deploy Wallpapers
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying wallpapers"
 
@@ -345,7 +389,7 @@ if [ -d "$WALLPAPERS_SRC" ]; then
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [8] Enable systemd services
+# [9] Enable systemd services
 # ═════════════════════════════════════════════════════════════════════════════
 step "Enabling systemd user services"
 
@@ -361,7 +405,7 @@ if [ -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.servi
 fi
 
 # ═════════════════════════════════════════════════════════════════════════════
-# [9] GTK theme (Catppuccin-Dark for GTK3/GTK4 apps)
+# [10] GTK theme (Catppuccin-Dark for GTK3/GTK4 apps)
 # ═════════════════════════════════════════════════════════════════════════════
 step "Installing Catppuccin GTK theme"
 
