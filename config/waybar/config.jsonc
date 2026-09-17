@@ -23,8 +23,8 @@
         "network",
         "power-profiles-daemon",
         "battery",
-        "custom/swaync",
-        "tray"
+        "tray",
+        "custom/swaync"
     ],
 
     "hyprland/workspaces": {
@@ -132,7 +132,7 @@
 
     "custom/swaync": {
         "tooltip": false,
-        "format": "{icon}{text}",
+        "format": "{icon} {text}",
         "format-icons": {
             "notification":          "<span foreground='#ed8796'>󰂚</span>",
             "none":                  "󰂜",
