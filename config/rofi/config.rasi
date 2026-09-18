@@ -1,16 +1,6 @@
-/*
- * rofi/config.rasi — minimal dark launcher
- *
- * Palette comes from colors/current.rasi, which theme-sync.sh re-points every
- * time the wallpaper changes, so the launcher always matches the desktop.
- *
- * Launch with: rofi -show drun   (Super+R)
- */
-
 @import "colors/current.rasi"
 
 configuration {
-    modi: "drun,run,window";
     show-icons: true;
     icon-theme: "Papirus";
     drun-display-format: "{name}";
@@ -22,14 +12,17 @@ configuration {
     cycle: true;
     scroll-method: 0;
     terminal: "kitty";
-    font: "FiraCode Nerd Font 11";
+    font: "FiraCode Nerd Font 13";
+    display-combi: "Home";
     kb-cancel: "Escape";
+    kb-remove-to-eol: "";
     kb-row-down: "Down,Control+j";
     kb-row-up: "Up,Control+k";
     kb-accept-entry: "Return,KP_Enter";
     kb-delete-entry: "Shift+Delete";
     kb-mode-next: "Tab";
     kb-mode-previous: "Shift+Tab";
+    kb-element-next: "";
     kb-row-first: "Home";
     kb-row-last: "End";
     kb-page-prev: "Page_Up";
@@ -37,6 +30,30 @@ configuration {
 }
 
 * {
+    alternate-normal-background: transparent;
+    alternate-normal-foreground: @fg;
+    alternate-urgent-background: transparent;
+    alternate-urgent-foreground: @urgent;
+    alternate-active-background: transparent;
+    alternate-active-foreground: @fg;
+    selected-normal-background: @fg;
+    selected-normal-foreground: @bg;
+    selected-urgent-background: @urgent;
+    selected-urgent-foreground: @bg;
+    selected-active-background: @fg;
+    selected-active-foreground: @bg;
+    normal-background: transparent;
+    normal-foreground: @fg;
+    active-background: transparent;
+    active-foreground: @fg;
+    urgent-background: transparent;
+    urgent-foreground: @urgent;
+    background: @bg;
+    foreground: @fg;
+    lightbg: @bg;
+    lightfg: @bg-alt;
+    separatorcolor: transparent;
+
     background-color: transparent;
     text-color: @fg;
     border: 0;
@@ -46,60 +63,67 @@ configuration {
 }
 
 window {
-    width: 640px;
-    border: 2px;
-    border-color: @accent;
-    border-radius: 12px;
-    background-color: @bg;
-    padding: 8px;
+    transparency: "real";
+    location: center;
+    anchor: center;
+    width: 720px;
+    border: 1px;
+    border-color: @border-soft;
+    border-radius: 6px;
+    background-color: @bg-glass;
+    background-image: url("/home/alertxsto/.cache/rofi-wall.jpg", width);
+    padding: 0;
 }
 
 mainbox {
-    background-color: transparent;
     children: [ inputbar, listview ];
-    spacing: 6px;
+    spacing: 0;
+    background-color: transparent;
 }
 
 inputbar {
-    children: [ prompt, entry ];
-    background-color: @bg-alt;
-    border-radius: 8px;
-    padding: 10px 14px;
-    spacing: 8px;
-}
-
-prompt {
-    text-color: @accent;
+    children: [ entry ];
     background-color: transparent;
+    border: 0 0 1px 0;
+    border-color: @fg;
+    padding: 1.3em 1.5em 0.8em;
+    spacing: 0;
 }
 
 entry {
-    placeholder: "Search…";
+    placeholder: "TYPE TO SEARCH";
     text-color: @fg;
+    placeholder-color: @fg-dim;
     background-color: transparent;
     cursor: text;
+    font: "FiraCode Nerd Font 11";
 }
 
 listview {
-    background-color: transparent;
-    lines: 10;
+    background-color: @bg-glass;
+    border: 0;
+    lines: 8;
     columns: 1;
     fixed-height: false;
     scrollbar: false;
     dynamic: true;
     layout: vertical;
+    spacing: 0;
+    padding: 0.5em 0.6em 0.7em;
 }
 
 element {
     children: [ element-icon, element-text ];
     background-color: transparent;
-    border-radius: 8px;
-    padding: 8px 10px;
-    spacing: 10px;
+    border: 0;
+    border-radius: 6px;
+    padding: 0.55em 0.7em;
+    spacing: 0.85em;
+    cursor: pointer;
 }
 
 element-icon {
-    size: 22px;
+    size: 1.6em;
     background-color: transparent;
     text-color: inherit;
 }
@@ -116,7 +140,7 @@ element normal.normal {
 }
 
 element selected.normal {
-    background-color: @accent;
+    background-color: @fg;
     text-color: @bg;
 }
 
@@ -128,4 +152,32 @@ element normal.urgent {
 element selected.urgent {
     background-color: @urgent;
     text-color: @bg;
+}
+
+element normal.active {
+    background-color: transparent;
+    text-color: @fg;
+}
+
+element selected.active {
+    background-color: @fg;
+    text-color: @bg;
+}
+
+message {
+    background-color: transparent;
+    border: 0;
+    padding: 0.4em 1.2em 0.6em;
+    text-color: @fg-dim;
+}
+
+textbox {
+    text-color: @fg;
+}
+
+scrollbar {
+    width: 2px;
+    border: 0;
+    handle-color: @accent-dim;
+    handle-width: 2px;
 }

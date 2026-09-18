@@ -1,16 +1,12 @@
-/*
- * rofi/bgselector/style.rasi — fullscreen wallpaper grid
- *
- * Palette comes from colors/current.rasi (managed by theme-sync.sh), so the
- * picker matches the active wallpaper's colorscheme like every other surface.
- */
-
 @import "../colors/current.rasi"
 
 configuration {
     show-icons: true;
+    icon-theme: "Papirus";
     kb-cancel: "Escape";
     kb-accept-entry: "Return,KP_Enter";
+    kb-move-char-back: "Control+b";
+    kb-move-char-forward: "Control+f";
     kb-row-left: "h,Left";
     kb-row-right: "l,Right";
     kb-row-down: "j,Down";
@@ -19,71 +15,133 @@ configuration {
     kb-page-next: "Page_Down";
     kb-row-first: "Home";
     kb-row-last: "End";
+    kb-element-next: "";
 }
 
 * {
+    alternate-normal-background: transparent;
+    alternate-normal-foreground: @fg;
+    alternate-urgent-background: transparent;
+    alternate-urgent-foreground: @urgent;
+    alternate-active-background: transparent;
+    alternate-active-foreground: @fg;
+    selected-normal-background: transparent;
+    selected-normal-foreground: @fg;
+    selected-urgent-background: transparent;
+    selected-urgent-foreground: @urgent;
+    selected-active-background: transparent;
+    selected-active-foreground: @fg;
+    normal-background: transparent;
+    normal-foreground: @fg;
+    active-background: transparent;
+    active-foreground: @fg;
+    urgent-background: transparent;
+    urgent-foreground: @urgent;
+    background: @bg;
+    foreground: @fg;
+    lightbg: @bg;
+    lightfg: @bg-alt;
+    separatorcolor: transparent;
+
     background-color: transparent;
-    separator: none;
-    border: none;
-    padding: 0px;
-    margin: 0px;
     text-color: @fg;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    spacing: 0;
 }
 
 window {
-    background-color: @bg;
+    transparency: "real";
     fullscreen: true;
-    border: 0px;
-    separator: none;
+    enabled: true;
+    cursor: "default";
+    border: 0;
+    padding: 32% 4%;
+    background-color: transparent;
 }
 
 mainbox {
-    children: [listview];
-    spacing: 0px;
-    border: 0px;
-    separator: none;
-    padding: 0% 5%;
-    expand: true;
-    orientation: vertical;
-    valign: 0.5;
+    children: [ inputbar, listview ];
+    spacing: 1.1em;
+    background-color: transparent;
+}
+
+inputbar {
+    children: [ entry ];
+    background-color: transparent;
+    border: 0 0 1px 0;
+    border-color: @fg-dim;
+    padding: 0 0 0.5em;
+    spacing: 0;
+}
+
+entry {
+    placeholder: "TYPE TO SEARCH";
+    text-color: @fg;
+    placeholder-color: @fg-dim;
+    background-color: transparent;
+    cursor: text;
+    font: "FiraCode Nerd Font 11";
+    horizontal-align: 0.5;
 }
 
 listview {
-    padding: 20px;
-    spacing: 12px;
-    columns: 7;
+    padding: 0;
+    spacing: 1.1em;
+    columns: 5;
     lines: 1;
     flow: horizontal;
     fixed-height: true;
     scrollbar: false;
     cycle: true;
-    border: 0px;
-    separator: none;
-    expand: true;
-    valign: 0.5;
-    halign: 0.5;
+    dynamic: false;
+    background-color: transparent;
+    border: 0;
 }
 
 element {
-    border-radius: 8px;
-    children: [element-icon];
-    background-color: @bg-alt;
-    padding: 0px;
-    margin: 0px;
+    orientation: vertical;
+    children: [ element-icon ];
+    background-color: transparent;
+    border: 1px;
+    border-color: @fg-dim;
+    border-radius: 6px;
+    padding: 0;
+    spacing: 0;
+    cursor: pointer;
 }
 
-element selected {
-    border: 2px solid;
+element selected.normal {
+    background-color: transparent;
     border-color: @accent;
-    border-radius: 8px;
-    background-color: @bg-alt;
+}
+
+element selected.active {
+    background-color: transparent;
+    border-color: @accent;
 }
 
 element-icon {
-    size: 330px 509px;
+    size: 18em 10.1em;
     horizontal-align: 0.5;
     vertical-align: 0.5;
-    background-color: @bg-alt;
+    background-color: transparent;
+    border-radius: 5px;
     expand: true;
-    scale: "fit";
+    scale: "fill";
+}
+
+element-text {
+    background-color: transparent;
+    text-color: transparent;
+    padding: 0;
+    font: "FiraCode Nerd Font 1";
+}
+
+message {
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    text-color: @fg-dim;
 }

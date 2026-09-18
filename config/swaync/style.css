@@ -1,5 +1,5 @@
 /* ══════════════════════════════════════════════════════════
-   swaync/style.css — Premium Floating Islands design
+   swaync/style.css — Glass panel design (matches rofi home)
    Colors via @import from colors/current.css (auto-themed)
    ══════════════════════════════════════════════════════════ */
 @import url("colors/current.css");
@@ -23,15 +23,11 @@
     margin: 6px 10px;
 }
 
-.notification-row:hover {
-    opacity: 1;
-}
-
 .notification {
     border-radius: 16px;
     background: @base;
-    border: 1px solid @surface0;
-    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    border: 1px solid alpha(@text, 0.07);
+    box-shadow: 0 6px 22px alpha(@mantle, 0.5);
     padding: 0;
 }
 
@@ -39,7 +35,6 @@
     padding: 14px 16px 12px;
 }
 
-/* Default click target */
 .notification-default-action {
     border-radius: 16px;
     background: transparent;
@@ -48,7 +43,7 @@
 }
 
 .notification-default-action:hover {
-    background: @surface0;
+    background: alpha(@mauve, 0.08);
     border-radius: 16px;
 }
 
@@ -62,7 +57,7 @@
 .body {
     font-size: 12px;
     color: @subtext1;
-    margin-top: 2px;
+    margin-top: 3px;
 }
 
 .app-name {
@@ -84,7 +79,7 @@
 
 /* ── Close button ────────────────────────────── */
 .close-button {
-    background: @surface1;
+    background: alpha(@text, 0.08);
     color: @subtext0;
     border-radius: 50%;
     padding: 0;
@@ -101,10 +96,10 @@
 
 /* ── Action buttons ──────────────────────────── */
 .notification-action {
-    background: @surface0;
+    background: alpha(@mauve, 0.12);
     color: @text;
-    border-radius: 8px;
-    padding: 5px 14px;
+    border-radius: 10px;
+    padding: 6px 14px;
     margin: 0 6px 10px;
     font-size: 12px;
 }
@@ -121,7 +116,7 @@ progressbar {
 }
 
 progressbar > trough {
-    background: @surface0;
+    background: alpha(@text, 0.08);
     border-radius: 8px;
     min-height: 8px;
 }
@@ -139,9 +134,9 @@ progressbar > trough > progress {
 .control-center {
     background: @base;
     border-radius: 18px;
-    border: 1px solid @surface0;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.65);
-    margin: 10px;
+    border: 1px solid alpha(@text, 0.07);
+    box-shadow: 0 10px 32px alpha(@mantle, 0.65);
+    margin: 8px;
 }
 
 .control-center-list {
@@ -160,27 +155,28 @@ progressbar > trough > progress {
 }
 
 .control-center .notification {
-    background: @mantle;
-    border: 1px solid @surface0;
+    background: alpha(@text, 0.04);
+    border: 1px solid alpha(@text, 0.05);
+    box-shadow: none;
 }
 
 .control-center .notification:hover {
-    background: @surface0;
+    background: alpha(@mauve, 0.08);
 }
 
 /* ── Title widget ────────────────────────────── */
 .widget-title {
-    background: @base;
+    background: transparent;
     color: @text;
     font-size: 15px;
     font-weight: bold;
-    padding: 18px 18px 10px;
+    padding: 16px 18px 10px;
     border-radius: 18px 18px 0 0;
 }
 
 .widget-title button {
-    background: @surface0;
-    color: @subtext1;
+    background: alpha(@mauve, 0.12);
+    color: @text;
     border-radius: 10px;
     padding: 4px 14px;
     font-size: 11px;
@@ -195,15 +191,83 @@ progressbar > trough > progress {
 
 /* ── Separator between widgets ───────────────── */
 .widget-separator {
-    background: @surface0;
+    background: alpha(@text, 0.06);
     min-height: 1px;
     margin: 0 16px;
 }
 
-/* ── DND (Do Not Disturb) toggle ─────────────── */
+/* ══════════════════════════════════════════════════════════
+   MENUBAR — toggles (left, .start) + power menu (right, .end)
+   Widget tree (upstream 0.12):
+   .widget-menubar > .menu-button-bar > .start / .end
+   .widget-menubar > revealer > .menu-content
+   ══════════════════════════════════════════════════════════ */
+
+.widget-menubar {
+    background: transparent;
+    padding: 2px 10px;
+}
+
+.widget-menubar > .menu-button-bar > .start > widget > button,
+.widget-menubar > .menu-button-bar > .end > widget > button {
+    background: alpha(@text, 0.05);
+    color: @text;
+    border-radius: 10px;
+    font-size: 12px;
+    padding: 0 12px;
+    min-height: 34px;
+    margin: 2px;
+}
+
+.widget-menubar > .menu-button-bar > .start > widget > button:hover,
+.widget-menubar > .menu-button-bar > .end > widget > button:hover {
+    background: alpha(@mauve, 0.16);
+}
+
+.widget-menubar > .menu-button-bar > .start > widget > button.toggle:checked,
+.widget-menubar > .menu-button-bar > .end > widget > button.toggle:checked {
+    background: @mauve;
+    color: @base;
+}
+
+.widget-menubar > .menu-button-bar > .end > widget > button.menu {
+    font-size: 15px;
+    min-width: 38px;
+}
+
+.widget-menubar > .menu-button-bar > .end > widget > button.menu:hover {
+    background: @red;
+    color: @base;
+}
+
+/* dropdown content */
+.widget-menubar > revealer .menu-content {
+    background: alpha(@text, 0.04);
+    border-radius: 12px;
+    margin: 2px 4px;
+    padding: 4px;
+}
+
+.widget-menubar > revealer .menu-content > widget > button {
+    background: transparent;
+    color: @text;
+    border-radius: 8px;
+    font-size: 12px;
+    padding: 6px 12px;
+    margin: 1px 2px;
+}
+
+.widget-menubar > revealer .menu-content > widget > button:hover {
+    background: alpha(@mauve, 0.16);
+}
+
+/* ══════════════════════════════════════════════════════════
+   DND switch
+   ══════════════════════════════════════════════════════════ */
+
 .widget-dnd {
-    background: @mantle;
-    padding: 12px 18px;
+    background: transparent;
+    padding: 10px 18px;
     color: @text;
     font-size: 13px;
     font-weight: bold;
@@ -211,11 +275,10 @@ progressbar > trough > progress {
 
 .widget-dnd > switch {
     border-radius: 14px;
-    background: @surface1;
+    background: alpha(@text, 0.10);
     border: none;
     min-height: 26px;
     min-width: 52px;
-    transition: background 0.3s ease;
 }
 
 .widget-dnd > switch:checked {
@@ -223,22 +286,32 @@ progressbar > trough > progress {
 }
 
 .widget-dnd > switch slider {
-    background: @text;
+    background: @base;
     border-radius: 50%;
     min-height: 20px;
     min-width: 20px;
     margin: 3px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-/* ── Volume slider ───────────────────────────── */
+/* ══════════════════════════════════════════════════════════
+   SLIDERS — volume & backlight
+   ══════════════════════════════════════════════════════════ */
+
 .widget-volume {
-    background: @mantle;
-    padding: 10px 18px 14px;
+    background: transparent;
+    padding: 6px 18px;
     color: @text;
 }
 
-.widget-volume > box > button {
+.widget-backlight {
+    background: transparent;
+    padding: 6px 18px;
+    color: @text;
+}
+
+.widget-volume > box > button,
+.widget-backlight > box > button {
     background: transparent;
     color: @mauve;
     font-size: 16px;
@@ -246,74 +319,69 @@ progressbar > trough > progress {
     min-width: 28px;
 }
 
-.widget-volume > box > button:hover {
+.widget-backlight > box > button {
+    color: @yellow;
+}
+
+.widget-volume > box > button:hover,
+.widget-backlight > box > button:hover {
     color: @text;
 }
 
-.widget-volume scale {
+.widget-volume scale,
+.widget-backlight scale {
     padding: 0;
 }
 
-.widget-volume scale trough {
-    background: @surface0;
-    border-radius: 6px;
-    min-height: 6px;
+.widget-volume scale trough,
+.widget-backlight scale trough {
+    background: alpha(@text, 0.10);
+    border-radius: 8px;
+    min-height: 10px;
 }
 
 .widget-volume scale trough highlight {
     background: @mauve;
-    border-radius: 6px;
-}
-
-.widget-volume scale slider {
-    background: @mauve;
-    border-radius: 50%;
-    min-height: 14px;
-    min-width: 14px;
-    box-shadow: 0 0 6px rgba(198, 160, 246, 0.4);
-}
-
-/* ── Backlight/Brightness slider ─────────────── */
-.widget-backlight {
-    background: @mantle;
-    padding: 10px 18px 14px;
-    color: @text;
-}
-
-.widget-backlight > box > button {
-    background: transparent;
-    color: @yellow;
-    font-size: 16px;
-    padding: 0 6px;
-    min-width: 28px;
-}
-
-.widget-backlight scale trough {
-    background: @surface0;
-    border-radius: 6px;
-    min-height: 6px;
+    border-radius: 8px;
 }
 
 .widget-backlight scale trough highlight {
     background: @yellow;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
+.widget-volume scale slider,
 .widget-backlight scale slider {
-    background: @yellow;
+    background: @base;
     border-radius: 50%;
-    min-height: 14px;
-    min-width: 14px;
+    min-height: 16px;
+    min-width: 16px;
+    border: 1px solid alpha(@text, 0.12);
 }
 
-/* ── MPRIS media player ──────────────────────── */
+/* per-app volume rows */
+.per-app-volume {
+    background: alpha(@text, 0.04);
+    border-radius: 10px;
+    margin: 4px 8px;
+}
+
+.widget-volume row image {
+    -gtk-icon-size: 20px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MPRIS media player
+   ══════════════════════════════════════════════════════════ */
+
 .widget-mpris {
-    background: @mantle;
-    padding: 12px 18px;
+    background: transparent;
+    padding: 8px 18px;
 }
 
 .widget-mpris-player {
-    background: @surface0;
+    background: alpha(@text, 0.04);
+    border: 1px solid alpha(@text, 0.05);
     border-radius: 14px;
     padding: 12px;
     margin: 4px 0;
@@ -332,7 +400,7 @@ progressbar > trough > progress {
 }
 
 .widget-mpris > box > button {
-    background: @surface1;
+    background: alpha(@text, 0.07);
     color: @text;
     border-radius: 50%;
     padding: 6px;
@@ -342,6 +410,48 @@ progressbar > trough > progress {
 }
 
 .widget-mpris > box > button:hover {
+    background: @mauve;
+    color: @base;
+}
+
+/* ── Inhibitors ──────────────────────────────── */
+.widget-inhibitors {
+    margin: 8px;
+    font-size: 13px;
+}
+
+.widget-inhibitors > button {
+    background: alpha(@text, 0.06);
+    color: @text;
+    border-radius: 10px;
+    padding: 4px 12px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   BUTTONS GRID (legacy widget, kept for compatibility)
+   ══════════════════════════════════════════════════════════ */
+
+.widget-buttons-grid {
+    background: transparent;
+    padding: 6px 14px 12px;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button {
+    background: alpha(@text, 0.05);
+    color: @text;
+    border-radius: 12px;
+    font-size: 18px;
+    min-height: 44px;
+    min-width: 44px;
+    margin: 4px;
+    padding: 0;
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button:hover {
+    background: alpha(@mauve, 0.16);
+}
+
+.widget-buttons-grid > flowbox > flowboxchild > button.toggle:checked {
     background: @mauve;
     color: @base;
 }

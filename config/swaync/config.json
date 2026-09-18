@@ -2,27 +2,28 @@
     "$schema": "/etc/xdg/swaync/configSchema.json",
     "positionX": "right",
     "positionY": "top",
-    "control-center-margin-top": 10,
-    "control-center-margin-bottom": 10,
-    "control-center-margin-right": 10,
+    "control-center-margin-top": 8,
+    "control-center-margin-bottom": 8,
+    "control-center-margin-right": 8,
     "control-center-margin-left": 0,
     "notification-icon-size": 48,
     "notification-body-image-height": 100,
     "notification-body-image-width": 200,
-    "timeout": 5,
-    "timeout-low": 2,
+    "timeout": 6,
+    "timeout-low": 3,
     "timeout-critical": 0,
     "fit-to-screen": false,
-    "control-center-width": 420,
-    "notification-window-width": 420,
+    "control-center-width": 400,
+    "notification-window-width": 400,
     "keyboard-shortcuts": true,
     "image-visibility": "when-available",
-    "transition-time": 200,
+    "transition-time": 220,
     "hide-on-clear": false,
     "hide-on-action": true,
     "script-fail-notify": true,
     "widgets": [
         "title",
+        "menubar",
         "dnd",
         "volume",
         "backlight",
@@ -33,20 +34,91 @@
         "title": {
             "text": "Notifications",
             "clear-all-button": true,
-            "button-text": "󰎟 Clear All"
+            "button-text": "Clear"
+        },
+        "menubar": {
+            "menu#power": {
+                "label": "⏻",
+                "position": "right",
+                "animation-type": "slide_down",
+                "animation-duration": 250,
+                "actions": [
+                    {
+                        "label": "Lock",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh lock"
+                    },
+                    {
+                        "label": "Logout",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh logout"
+                    },
+                    {
+                        "label": "Reboot",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh reboot"
+                    },
+                    {
+                        "label": "Shutdown",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh shutdown"
+                    }
+                ]
+            },
+            "buttons#toggles": {
+                "position": "left",
+                "actions": [
+                    {
+                        "label": "󰖩  Wifi",
+                        "type": "toggle",
+                        "command": "$HOME/.config/scripts/swaync/toggle-wifi.sh",
+                        "update-command": "$HOME/.config/scripts/swaync/toggle-wifi.sh"
+                    },
+                    {
+                        "label": "󰂯  Bluetooth",
+                        "type": "toggle",
+                        "command": "$HOME/.config/scripts/swaync/toggle-bt.sh",
+                        "update-command": "$HOME/.config/scripts/swaync/toggle-bt.sh"
+                    },
+                    {
+                        "label": "󰗽  Performance",
+                        "type": "toggle",
+                        "command": "$HOME/.config/scripts/swaync/toggle-power.sh",
+                        "update-command": "$HOME/.config/scripts/swaync/toggle-power.sh"
+                    },
+                    {
+                        "label": "󰄀  Screenshot",
+                        "command": "$HOME/.config/scripts/swaync/action-screenshot.sh"
+                    },
+                    {
+                        "label": "󰉋  Files",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh files"
+                    },
+                    {
+                        "label": "󰕾  Volume",
+                        "command": "$HOME/.config/scripts/swaync/action-session.sh settings"
+                    }
+                ]
+            }
         },
         "dnd": {
             "text": "Do Not Disturb"
         },
         "volume": {
-            "label": ""
+            "label": "󰕾",
+            "show-per-app": true,
+            "show-per-app-icon": true,
+            "show-per-app-label": false
         },
         "backlight": {
-            "label": "󰃞"
+            "label": "󰃞",
+            "device": "amdgpu_bl2"
         },
         "mpris": {
-            "image-size": 96,
+            "show-album-art": "always",
+            "autohide": true,
+            "loop-carousel": true,
+            "image-size": 64,
             "image-radius": 12
+        },
+        "notifications": {
+            "vexpand": true
         }
     }
 }

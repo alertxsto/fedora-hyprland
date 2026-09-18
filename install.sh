@@ -138,12 +138,20 @@ FEDORA_PKGS=(
     hyprland-guiutils                         # hyprland-share-picker and friends
     hyprland-qt-support                       # Qt platform integration (qt6 apps theming)
     hyprshutdown                              # graceful shutdown dialog (SUPER+M)
+    hyprlock                                  # session lock handler (Power → Lock)
     thunar exo                                # file manager + "Open Terminal Here" action
     pavucontrol                               # pulseaudio/pipewire volume GUI (waybar click)
     tuned-ppd                                 # provides the PowerProfiles D-Bus service on Fedora
     rofi-themes                               # Arc-Dark + gruvbox themes shipped by Fedora
     ghostty                                   # second terminal (theme-synced)
     neovim                                    # LazyVim editor
+    # Rofi home / agent tooling dependencies
+    grim slurp wl-clipboard                   # screenshots + clipboard (rofi menu, swaync, agent-watch)
+    hyprpicker                                # color picker (rofi Capture menu)
+    xdg-utils                                 # xdg-open (Learn links, agent-manager)
+    breeze-cursor-theme                       # cursor theme set in hyprland.lua
+    nodejs22-npm                              # npm — agent-manager installs claude/codex/gemini
+    python3                                   # rofi-keybinds.sh + helper parsing
 )
 
 OPENSUSE_PKGS=(
@@ -162,10 +170,17 @@ OPENSUSE_PKGS=(
     awww                                      # wallpaper daemon (swww successor)
     hyprland-guiutils                         # hyprland-share-picker and friends
     hyprshutdown                              # graceful shutdown dialog (SUPER+M)
+    hyprlock                                  # session lock handler (Power → Lock)
     thunar exo                                # file manager + "Open Terminal Here" action
     pavucontrol                               # volume GUI (waybar click)
     power-profiles-daemon                     # PowerProfiles D-Bus service (openSUSE)
     neovim                                    # LazyVim editor
+    # Rofi home / agent tooling dependencies
+    grim slurp wl-clipboard                   # screenshots + clipboard (rofi menu, swaync, agent-watch)
+    hyprpicker                                # color picker (rofi Capture menu)
+    xdg-utils                                 # xdg-open (Learn links, agent-manager)
+    nodejs22-npm                              # npm — agent-manager installs claude/codex/gemini
+    python3                                   # rofi-keybinds.sh + helper parsing
 )
 
 case "$DISTRO" in
@@ -306,16 +321,32 @@ ok "Directories and icon theme ready."
 # ═════════════════════════════════════════════════════════════════════════════
 step "Deploying config files"
 
-for app in hypr waybar rofi kitty ghostty fish nvim fastfetch btop scripts gtk-3.0 Thunar swaync; do
+for app in hypr waybar rofi kitty ghostty fish nvim fastfetch btop scripts gtk-3.0 Thunar swaync opencode; do
     src="$DOTFILES/config/$app"
     dst="$HOME/.config/$app"
     if [ -d "$src" ]; then
-        deploy_link "$src" "$dst"
+        # opencode's config dir may already exist with user data (auth, plugins,
+        # node_modules); link the files we own instead of replacing the dir.
+        if [ "$app" = "opencode" ]; then
+            mkdir -p "$dst/plugins" "$dst/prompts"
+            for f in "$src"/*.md "$src"/*.jsonc "$src"/*.json; do
+                [ -f "$f" ] || continue
+                deploy_link "$f" "$dst/$(basename "$f")"
+            done
+            for f in "$src/plugins/"* "$src/prompts/"*; do
+                [ -f "$f" ] || continue
+                deploy_link "$f" "$dst/$(basename "$(dirname "$f")")/$(basename "$f")"
+            done
+        else
+            deploy_link "$src" "$dst"
+        fi
     fi
 done
 
 # Ensure all scripts are executable
 chmod +x "$HOME/.config/scripts/"*.sh 2>/dev/null || true
+chmod +x "$HOME/.config/rofi/scripts/"*.sh 2>/dev/null || true
+chmod +x "$HOME/.config/scripts/swaync/"*.sh 2>/dev/null || true
 ok "Scripts marked executable."
 
 # Standalone files
@@ -338,13 +369,41 @@ for f in "$DOTFILES"/config/systemd/user/graphical-session.target.wants/*; do
         continue
     fi
     ln -sf "$f" "$target"
+    # The wants/ dir alone is not enough for `systemctl enable`; the unit must
+    # also be discoverable directly under user/.
+    ln -sf "$f" "$HOME/.config/systemd/user/$name"
 done
 ok "Systemd user service symlinks created."
+
+# fumon (uwsm's unit failure notifier) is replaced by agent-watch.service,
+# which adds clickable "debug with AI" actions. Mask it so both don't fire.
+if [ -f "$HOME/.config/systemd/user/agent-watch.service" ]; then
+    systemctl --user mask fumon.service >/dev/null 2>&1 || true
+    systemctl --user stop fumon.service >/dev/null 2>&1 || true
+    systemctl --user daemon-reload >/dev/null 2>&1 || true
+    systemctl --user enable agent-watch.service >/dev/null 2>&1 || true
+    ok "agent-watch enabled; fumon masked."
+fi
 
 # Binaries
 if [ -d "$DOTFILES/bin" ]; then
     cp -rn "$DOTFILES/bin/"* "$HOME/.local/bin/" 2>/dev/null || true
     ok "Binaries installed (bluetui, impala-nm)."
+fi
+
+# ── AI coding agents ──
+# opencode is the desktop's primary agent (SUPER+R → AI Agents, error → debug
+# flow). Install it if missing; other agents are installed on demand from the
+# launcher via agent-manager.sh.
+if ! command -v opencode &>/dev/null; then
+    info "Installing opencode (primary AI agent)..."
+    if curl -fsSL https://opencode.ai/install | bash; then
+        ok "opencode installed."
+    else
+        warn "opencode install failed — retry from: SUPER+R → AI Agents"
+    fi
+else
+    ok "opencode already installed ($(opencode --version 2>/dev/null | head -1))."
 fi
 
 # Sanity-check bluetui: it exits instantly when the adapter is rfkill
@@ -403,6 +462,7 @@ if [ -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.servi
     warn "Stale vicinae.service link found — removing (vicinae is no longer used)."
     rm -f "$HOME/.config/systemd/user/graphical-session.target.wants/vicinae.service"
 fi
+rm -f "$HOME/.config/systemd/user/vicinae.service" 2>/dev/null || true
 
 # ═════════════════════════════════════════════════════════════════════════════
 # [10] GTK theme (Catppuccin-Dark for GTK3/GTK4 apps)

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 WALL_DIR="$HOME/Pictures/Wallpapers"
-CACHE_DIR="$HOME/.cache/thumbnails/bgselector"
+CACHE_DIR="$HOME/.cache/thumbnails/bgselector-wide"
 CACHE_INDEX="$CACHE_DIR/.index"
 
 mkdir -p "$CACHE_DIR"
@@ -58,12 +58,12 @@ generate_thumbnail() {
     # -filter Triangle is faster than default Lanczos
     # -limit memory/map constrains resource usage per job
     if [[ "$img" =~ \.(gif|GIF)$ ]]; then
-        magick "$img[0]" -define jpeg:size=660x1080 -filter Triangle -strip \
-            -thumbnail 330x540^ -gravity center -extent 330x540 \
+        magick "$img[0]" -define jpeg:size=1280x720 -filter Triangle -strip \
+            -thumbnail 640x360^ -gravity center -extent 640x360 \
             -quality 80 +repage "$cache_file" 2>/dev/null
     else
-        magick "$img" -define jpeg:size=660x1080 -filter Triangle -strip \
-            -thumbnail 330x540^ -gravity center -extent 330x540 \
+        magick "$img" -define jpeg:size=1280x720 -filter Triangle -strip \
+            -thumbnail 640x360^ -gravity center -extent 640x360 \
             -quality 80 +repage "$cache_file" 2>/dev/null
     fi
     [ -f "$cache_file" ] && echo "1" >> "$progress"
@@ -95,28 +95,37 @@ rm -f "$progress_file"
 # Update cache index
 mv "$current_index" "$CACHE_INDEX"
 
-# Build rofi list
+# Build rofi list. The visible label is the basename (without extension);
+# the full relative path travels in the `info` row option so names stay
+# unique even when two wallpapers share a filename.
 rofi_input=$(mktemp)
 while read -r img; do
     rel_path="${img#$WALL_DIR/}"
     cache_name="${rel_path//\//_}"
     cache_name="${cache_name%.*}.jpg"
     cache_file="$CACHE_DIR/$cache_name"
-    
+
     [ -f "$cache_file" ] && printf '%s\000icon\037%s\n' "$rel_path" "$cache_file"
 done < "$CACHE_INDEX" > "$rofi_input"
 
-# Show rofi and get selection
-selected=$(rofi -dmenu -show-icons -theme "$HOME/.config/rofi/bgselector/style.rasi" < "$rofi_input")
-rm "$rofi_input"
+selected=$(rofi -dmenu -i -show-icons -sync \
+    -theme "$HOME/.config/rofi/bgselector/style.rasi" \
+    -p "Wallpaper" \
+    < "$rofi_input")
+rm -f "$rofi_input"
 
-# Apply wallpaper
+selected_path=""
 if [ -n "$selected" ]; then
-    selected_path="$WALL_DIR/$selected"
-    if [ -f "$selected_path" ]; then
-        awww img "$selected_path" -t fade --transition-duration 2 --transition-fps 30 &
-        sleep 0.2
-        "$HOME/.config/scripts/theme-sync.sh" "$selected_path" &
-        wait
+    if [ -f "$WALL_DIR/$selected" ]; then
+        selected_path="$WALL_DIR/$selected"
+    elif [ -f "$selected" ]; then
+        selected_path="$selected"
     fi
+fi
+
+if [ -n "$selected_path" ] && [ -f "$selected_path" ]; then
+    awww img "$selected_path" -t fade --transition-duration 2 --transition-fps 30 &
+    sleep 0.2
+    "$HOME/.config/scripts/theme-sync.sh" "$selected_path" &
+    wait
 fi

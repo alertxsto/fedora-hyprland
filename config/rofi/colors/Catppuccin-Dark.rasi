@@ -10,4 +10,11 @@
     info:     #8aadf4;
     selected: #c6a0f6;
     border:   #c6a0f6;
+    bg-glass:    #24273aD9;
+    surface:     #5b607899;
+    surface-soft:#5b60784D;
+    accent-soft: #c6a0f629;
+    accent-dim:  #c6a0f673;
+    border-soft: #c6a0f659;
+    fg-dim:      #cad3f580;
 }

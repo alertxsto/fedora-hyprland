@@ -1,0 +1,47 @@
+# rofi home menu — tab-separated: id  parent  icon  label  action  keywords
+# action forms: submenu:<id> | cmd:<shell> | back:<id>
+# keep this file in sync with scripts/home.sh expectations
+ai	root	applications-engineering	AI Agents	submenu:ai	agent opencode pi claude install update
+ai.new-opencode	ai	utilities-terminal	New opencode session	cmd:$HOME/.config/scripts/agent-manager.sh new opencode	project start
+ai.new-pi	ai	utilities-terminal	New pi session	cmd:$HOME/.config/scripts/agent-manager.sh new pi	project start
+ai.status	ai	utilities-system-monitor	Agent status	cmd:$HOME/.config/scripts/agent-manager.sh status	version installed
+ai.update-all	ai	system-software-update	Update all agents	cmd:$HOME/.config/scripts/agent-manager.sh update-all	upgrade
+ai.install-pi	ai	system-software-update	Install pi	cmd:$HOME/.config/scripts/agent-manager.sh install pi
+ai.install-claude	ai	system-software-update	Install claude	cmd:$HOME/.config/scripts/agent-manager.sh install claude
+ai.install-codex	ai	system-software-update	Install codex	cmd:$HOME/.config/scripts/agent-manager.sh install codex
+ai.install-gemini	ai	system-software-update	Install gemini	cmd:$HOME/.config/scripts/agent-manager.sh install gemini
+ai.edit-agents	ai	text-x-script	Edit agent instructions	cmd:kitty -e nvim $HOME/.config/opencode/AGENTS.md	rules instructions
+ai.edit-config	ai	preferences-system	Edit opencode config	cmd:kitty -e nvim $HOME/.config/opencode/opencode.json
+ai.debug-last	ai	dialog-warning	Debug last failed unit	cmd:$HOME/.config/scripts/agent-manager.sh debug-last	error systemd journal
+style	root	preferences-desktop-theme	Style	submenu:style	wallpaper theme colors
+style.wallpaper	style	preferences-desktop-wallpaper	Wallpaper picker	cmd:$HOME/.config/scripts/bgselector.sh	background grid
+style.theme	style	preferences-desktop-theme	Theme picker	cmd:$HOME/.config/scripts/theme-picker.sh	colorscheme palette
+system	root	applications-system	System	submenu:system	update reload
+system.update	system	system-software-update	System update	cmd:kitty -e sudo dnf upgrade	dnf upgrade package
+system.failed	system	dialog-warning	Failed units	cmd:$HOME/.config/scripts/agent-manager.sh failed	error systemd
+system.reload	system	system-reboot	Reload Hyprland	cmd:hyprctl reload	restart
+system.waybar	system	system-reboot	Restart waybar	cmd:sh -c 'pkill waybar; sleep 0.4; waybar'
+system.swaync	system	system-reboot	Restart SwayNC	cmd:sh -c 'pkill swaync; sleep 0.4; swaync'
+system.info	system	utilities-system-monitor	System info	cmd:kitty -e fastfetch	specs hardware
+system.btop	system	utilities-system-monitor	Resource monitor	cmd:kitty -e btop	cpu ram processes
+capture	root	camera-photo	Capture	submenu:capture	screenshot record
+capture.screenshot	capture	camera-photo	Screenshot (GUI)	cmd:flameshot gui
+capture.region	capture	camera-photo	Screenshot to clipboard	cmd:sh -c 'grim -g "$(slurp)" - | wl-copy'
+capture.color	capture	preferences-color	Pick a color	cmd:hyprpicker -a	hex picker
+config	root	preferences-system	Config	submenu:config	settings edit
+config.hypr	config	preferences-system	Hyprland	cmd:kitty -e nvim $HOME/.config/hypr/hyprland.lua
+config.rofi	config	preferences-system	Rofi	cmd:kitty -e nvim $HOME/.config/rofi/config.rasi
+config.waybar	config	preferences-system	Waybar	cmd:kitty -e nvim $HOME/.config/waybar/style.css
+config.swaync	config	preferences-system	SwayNC	cmd:kitty -e nvim $HOME/.config/swaync/style.css
+config.kitty	config	preferences-system	Kitty	cmd:kitty -e nvim $HOME/.config/kitty/kitty.conf
+config.menu	config	text-x-script	Launcher menu	cmd:kitty -e nvim $HOME/.config/rofi/menu.tsv	rofi home entries
+learn	root	help-browser	Learn	submenu:learn	docs help
+learn.keybindings	learn	input-keyboard	Keybindings	cmd:$HOME/.config/scripts/rofi-keybinds.sh	shortcut hotkey cheatsheet
+learn.hyprland	learn	help-browser	Hyprland wiki	cmd:xdg-open https://wiki.hypr.land/
+learn.opencode	learn	help-browser	opencode docs	cmd:xdg-open https://opencode.ai/docs/
+power	root	system-shutdown	Power	submenu:power	lock reboot shutdown
+power.lock	power	system-lock-screen	Lock	cmd:loginctl lock-session
+power.suspend	power	system-suspend	Suspend	cmd:systemctl suspend
+power.logout	power	system-log-out	Logout	cmd:hyprctl dispatch exit
+power.reboot	power	system-reboot	Reboot	cmd:systemctl reboot
+power.shutdown	power	system-shutdown	Shutdown	cmd:systemctl poweroff

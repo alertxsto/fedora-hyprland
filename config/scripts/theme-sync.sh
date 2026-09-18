@@ -154,6 +154,15 @@ if [ ! -f "$ROFI_THEME" ]; then
     info:    ${BLUE};
     selected: ${ACCENT};
     border:  ${ACCENT};
+
+    /* design tokens for the glass launcher/pickers (alpha-suffixed hex) */
+    bg-glass:    ${BASE}D9;
+    surface:     ${SURFACE}99;
+    surface-soft:${SURFACE}4D;
+    accent-soft: ${ACCENT}29;
+    accent-dim:  ${ACCENT}73;
+    border-soft: ${ACCENT}59;
+    fg-dim:      ${TEXT}80;
 }
 EOF
 fi
@@ -206,8 +215,17 @@ killall -SIGUSR1 kitty 2>/dev/null
 # Reload Ghostty (SIGUSR2 = reload config)
 killall -SIGUSR2 ghostty 2>/dev/null
 
-# Reload swaync
-swaync-client --reload-config 2>/dev/null || true
+# Reload swaync — config AND css (css is what carries the theme colors;
+# --reload-config alone leaves the panel in the previous theme)
+swaync-client -rs 2>/dev/null || true
+swaync-client -R 2>/dev/null || true
+
+# Art plate for the rofi launcher (Ryoku-style right panel).
+if command -v magick >/dev/null 2>&1 && [ -f "$wallpaper_path" ]; then
+    magick "$wallpaper_path" -filter Triangle -strip \
+        -thumbnail 1440x500^ -gravity center -extent 1440x500 \
+        -quality 82 "$HOME/.cache/rofi-wall.jpg" 2>/dev/null || true
+fi
 
 # Rofi reads colors/current.rasi on next launch — nothing to reload.
 

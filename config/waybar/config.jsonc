@@ -16,16 +16,23 @@
         "clock"
     ],
     "modules-right": [
-        "cpu",
-        "memory",
-        "pulseaudio",
-        "bluetooth",
-        "network",
-        "power-profiles-daemon",
-        "battery",
-        "tray",
-        "custom/swaync"
+        "group/sys"
     ],
+
+    "group/sys": {
+        "orientation": "horizontal",
+        "modules": [
+            "cpu",
+            "memory",
+            "pulseaudio",
+            "bluetooth",
+            "network",
+            "power-profiles-daemon",
+            "battery",
+            "tray",
+            "custom/swaync"
+        ]
+    },
 
     "hyprland/workspaces": {
         "disable-scroll": true,

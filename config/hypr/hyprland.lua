@@ -37,7 +37,7 @@ hl.monitor({
 -- Set programs that you use
 local terminal = "kitty"
 local fileManager = "thunar"
-local menu = "rofi -show drun"
+local menu = "rofi -show combi -modes 'combi,drun,hom:" .. os.getenv("HOME") .. "/.config/rofi/scripts/home.sh' -combi-modes 'hom,drun' -combi-hide-mode-prefix -display-combi 'Home' -pid /tmp/rofi-home.pid -replace"
 
 -------------------
 ---- AUTOSTART ----
@@ -168,23 +168,23 @@ hl.curve("quick", { type = "bezier", points = { { 0.15, 0 }, { 0.1, 1 } } })
 -- Default springs
 hl.curve("easy", { type = "spring", mass = 1, stiffness = 71.2633, dampening = 15.8273644 })
 
-hl.animation({ leaf = "global", enabled = true, speed = 10, bezier = "default" })
-hl.animation({ leaf = "border", enabled = true, speed = 5.39, bezier = "easeOutQuint" })
-hl.animation({ leaf = "windows", enabled = true, speed = 4.79, spring = "easy" })
-hl.animation({ leaf = "windowsIn", enabled = true, speed = 4.1, spring = "easy", style = "popin 87%" })
-hl.animation({ leaf = "windowsOut", enabled = true, speed = 1.49, bezier = "linear", style = "popin 87%" })
-hl.animation({ leaf = "fadeIn", enabled = true, speed = 1.73, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeOut", enabled = true, speed = 1.46, bezier = "almostLinear" })
-hl.animation({ leaf = "fade", enabled = true, speed = 3.03, bezier = "quick" })
-hl.animation({ leaf = "layers", enabled = true, speed = 3.81, bezier = "easeOutQuint" })
-hl.animation({ leaf = "layersIn", enabled = true, speed = 4, bezier = "easeOutQuint", style = "fade" })
-hl.animation({ leaf = "layersOut", enabled = true, speed = 1.5, bezier = "linear", style = "fade" })
-hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 1.79, bezier = "almostLinear" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.39, bezier = "almostLinear" })
-hl.animation({ leaf = "workspaces", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesIn", enabled = true, speed = 1.21, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "workspacesOut", enabled = true, speed = 1.94, bezier = "almostLinear", style = "fade" })
-hl.animation({ leaf = "zoomFactor", enabled = true, speed = 7, bezier = "quick" })
+hl.animation({ leaf = "global", enabled = true, speed = 3, bezier = "default" })
+hl.animation({ leaf = "border", enabled = true, speed = 2, bezier = "easeOutQuint" })
+hl.animation({ leaf = "windows", enabled = true, speed = 1.6, bezier = "quick" })
+hl.animation({ leaf = "windowsIn", enabled = true, speed = 1.4, bezier = "quick", style = "popin 90%" })
+hl.animation({ leaf = "windowsOut", enabled = true, speed = 0.9, bezier = "linear", style = "popin 90%" })
+hl.animation({ leaf = "fadeIn", enabled = true, speed = 0.9, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeOut", enabled = true, speed = 0.8, bezier = "almostLinear" })
+hl.animation({ leaf = "fade", enabled = true, speed = 1.0, bezier = "quick" })
+hl.animation({ leaf = "layers", enabled = true, speed = 1.3, bezier = "easeOutQuint" })
+hl.animation({ leaf = "layersIn", enabled = true, speed = 1.2, bezier = "easeOutQuint", style = "fade" })
+hl.animation({ leaf = "layersOut", enabled = true, speed = 0.9, bezier = "linear", style = "fade" })
+hl.animation({ leaf = "fadeLayersIn", enabled = true, speed = 0.9, bezier = "almostLinear" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 0.8, bezier = "almostLinear" })
+hl.animation({ leaf = "workspaces", enabled = true, speed = 1.0, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "workspacesIn", enabled = true, speed = 0.9, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "workspacesOut", enabled = true, speed = 0.9, bezier = "almostLinear", style = "fade" })
+hl.animation({ leaf = "zoomFactor", enabled = true, speed = 2, bezier = "quick" })
 
 -- Ref https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 -- "Smart gaps" / "No gaps when only"
@@ -250,7 +250,7 @@ hl.config({
 
 		follow_mouse = 1,
 
-		sensitivity = -0.5, -- -1.0 - 1.0, 0 means no modification.
+		sensitivity = 0.0, -- -1.0 - 1.0, 0 means no modification.
 		accel_profile = "flat",
 		touchpad = {
 			natural_scroll = true,
@@ -268,7 +268,7 @@ hl.gesture({
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
 hl.device({
 	name = "epic-mouse-v1",
-	sensitivity = -0.5,
+	sensitivity = 0.0,
 })
 
 ---------------------
@@ -278,78 +278,79 @@ hl.device({
 local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
-local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close())
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal), { description = "Open terminal" })
+local closeWindowBind = hl.bind(mainMod .. " + C", hl.dsp.window.close(), { description = "Close window" })
 -- closeWindowBind:set_enabled(false)
 hl.bind(
 	mainMod .. " + M",
-	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit")
+	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch exit"),
+	{ description = "Exit Hyprland" }
 )
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("~/.config/scripts/bgselector.sh"))
-hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager), { description = "Open file manager" })
+hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }), { description = "Toggle floating" })
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(menu), { description = "Rofi home launcher" })
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("~/.config/scripts/bgselector.sh"), { description = "Wallpaper picker" })
+hl.bind(mainMod .. " + P", hl.dsp.window.pseudo(), { description = "Toggle pseudo-tile" })
+hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit"), { description = "Toggle split (dwindle)" })
 
 -- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }), { description = "Focus left" })
+hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }), { description = "Focus right" })
+hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }), { description = "Focus up" })
+hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }), { description = "Focus down" })
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
 for i = 1, 10 do
 	local key = i % 10 -- 10 maps to key 0
-	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
+	hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }), { description = "Workspace " .. i })
+	hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }), { description = "Move to workspace " .. i })
 end
 
 -- Example special workspace (scratchpad)
-hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"))
-hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }))
+hl.bind(mainMod .. " + S", hl.dsp.workspace.toggle_special("magic"), { description = "Toggle scratchpad" })
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.window.move({ workspace = "special:magic" }), { description = "Move to scratchpad" })
 
 -- Scroll through existing workspaces with mainMod + scroll
-hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }), { description = "Next workspace" })
+hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }), { description = "Previous workspace" })
 
 -- Move/resize windows with mainMod + LMB/RMB and dragging
-hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
-hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true, description = "Drag window" })
+hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true, description = "Resize window" })
 
 -- Screenshot with flameshot
-hl.bind("Print", hl.dsp.exec_cmd("flameshot gui"))
+hl.bind("Print", hl.dsp.exec_cmd("flameshot gui"), { description = "Screenshot" })
 
 -- Laptop multimedia keys for volume and LCD brightness
 hl.bind(
 	"XF86AudioRaiseVolume",
 	hl.dsp.exec_cmd("~/.config/scripts/volume.sh up"),
-	{ locked = true, repeating = true }
+	{ locked = true, repeating = true, description = "Volume up" }
 )
 hl.bind(
 	"XF86AudioLowerVolume",
 	hl.dsp.exec_cmd("~/.config/scripts/volume.sh down"),
-	{ locked = true, repeating = true }
+	{ locked = true, repeating = true, description = "Volume down" }
 )
 hl.bind(
 	"XF86AudioMute",
 	hl.dsp.exec_cmd("~/.config/scripts/volume.sh mute"),
-	{ locked = true, repeating = true }
+	{ locked = true, repeating = true, description = "Mute volume" }
 )
 hl.bind(
 	"XF86AudioMicMute",
 	hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"),
-	{ locked = true, repeating = true }
+	{ locked = true, repeating = true, description = "Mute microphone" }
 )
-hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/scripts/brightness.sh up"),   { locked = true, repeating = true })
-hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/scripts/brightness.sh down"), { locked = true, repeating = true })
+hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd("~/.config/scripts/brightness.sh up"),   { locked = true, repeating = true, description = "Brightness up" })
+hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd("~/.config/scripts/brightness.sh down"), { locked = true, repeating = true, description = "Brightness down" })
 
 -- Requires playerctl
-hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
-hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
-hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true, description = "Next track" })
+hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Pause playback" })
+hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true, description = "Play/pause" })
+hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true, description = "Previous track" })
 
 --------------------------------
 ---- WINDOWS AND WORKSPACES ----
@@ -418,4 +419,29 @@ hl.window_rule({
 	float = true,
 	size = { 800, 500 },
 	center = true,
+})
+
+-- Flameshot on Wayland is a plain xdg_toplevel, not a layer-shell overlay, so
+-- Hyprland would tile it and reflow every other window (flameshot#4948). Force
+-- float + fullscreen so it covers the screen like a capture overlay.
+-- Matched on title too: the Configuration dialog shares the "flameshot" class
+-- and must stay a normal window.
+hl.window_rule({
+	name = "flameshot-overlay",
+	match = { class = "^flameshot$", title = "^flameshot$" },
+	float = true,
+	fullscreen = true,
+	no_anim = true,
+})
+
+--------------------------------
+---- LAYER RULES ----
+--------------------------------
+
+-- Blur the rofi launcher and pickers so the glass panels read as one surface.
+hl.layer_rule({
+	name = "rofi-blur",
+	match = { namespace = "rofi" },
+	blur = true,
+	ignore_alpha = 0.3,
 })
